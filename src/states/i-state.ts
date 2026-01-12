@@ -1,5 +1,5 @@
-import type { IStateTransitionHandler } from './IStateTransitionHandler';
-import type { IStateMachine } from './IStateMachine';
+import type { IStateTransitionHandler } from './i-state-transition-handler';
+import type { IStateMachine } from './i-state-machine';
 
 export interface IState extends IStateTransitionHandler {
   readonly stateName: string;

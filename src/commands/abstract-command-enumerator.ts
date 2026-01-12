@@ -1,6 +1,6 @@
-import type { ICommand } from './ICommand';
-import type { ICommandEnumerator } from './ICommandEnumerator';
-import { AbstractCommand } from './AbstractCommand';
+import type { ICommand } from './i-command';
+import type { ICommandEnumerator } from './i-command-enumerator';
+import { AbstractCommand } from './abstract-command';
 
 export class AbstractCommandEnumerator extends AbstractCommand implements ICommandEnumerator {
   protected commands: ICommand[] = [];

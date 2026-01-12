@@ -1,4 +1,4 @@
-import type { ICommand } from './ICommand';
+import type { ICommand } from './i-command';
 
 export interface ICommandLayerCollection {
   addCommandToLayer(command: ICommand, layer: number): void;

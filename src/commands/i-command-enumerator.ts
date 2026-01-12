@@ -1,5 +1,5 @@
-import type { ICommand } from './ICommand';
-import type { ICommandCollection } from './ICommandCollection';
+import type { ICommand } from './i-command';
+import type { ICommandCollection } from './i-command-collection';
 
 export interface ICommandEnumerator extends ICommand, ICommandCollection {
   loopCount: number;

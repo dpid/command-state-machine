@@ -1,6 +1,6 @@
-import type { ICommand } from './ICommand';
-import { AbstractCommandEnumerator } from './AbstractCommandEnumerator';
-import { NullCommand } from './NullCommand';
+import type { ICommand } from './i-command';
+import { AbstractCommandEnumerator } from './abstract-command-enumerator';
+import { NullCommand } from './null-command';
 
 export class SerialCommandEnumerator extends AbstractCommandEnumerator {
   protected currentIndex: number = 0;

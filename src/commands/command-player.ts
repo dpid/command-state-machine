@@ -1,9 +1,9 @@
-import type { ICommand } from './ICommand';
-import type { ICommandEnumerator } from './ICommandEnumerator';
-import type { ICommandPlayer } from './ICommandPlayer';
-import { AbstractCommand } from './AbstractCommand';
-import { SerialCommandEnumerator } from './SerialCommandEnumerator';
-import { ParallelCommandEnumerator } from './ParallelCommandEnumerator';
+import type { ICommand } from './i-command';
+import type { ICommandEnumerator } from './i-command-enumerator';
+import type { ICommandPlayer } from './i-command-player';
+import { AbstractCommand } from './abstract-command';
+import { SerialCommandEnumerator } from './serial-command-enumerator';
+import { ParallelCommandEnumerator } from './parallel-command-enumerator';
 
 export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
   private parallelCommandEnumerator: ICommandEnumerator | null = null;

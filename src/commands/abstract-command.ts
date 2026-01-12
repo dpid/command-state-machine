@@ -1,6 +1,6 @@
-import type { ICommand } from './ICommand';
-import type { ICommandEnumerator } from './ICommandEnumerator';
-import { NullCommandEnumerator } from './NullCommandEnumerator';
+import type { ICommand } from './i-command';
+import type { ICommandEnumerator } from './i-command-enumerator';
+import { NullCommandEnumerator } from './null-command-enumerator';
 
 export abstract class AbstractCommand implements ICommand {
   protected _isCompleted: boolean = false;

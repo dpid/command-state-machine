@@ -1,8 +1,8 @@
-export type { IState } from './IState';
-export type { IStateMachine, StateChangeCallback } from './IStateMachine';
-export type { IStateTransitionHandler } from './IStateTransitionHandler';
+export type { IState } from './i-state';
+export type { IStateMachine, StateChangeCallback } from './i-state-machine';
+export type { IStateTransitionHandler } from './i-state-transition-handler';
 
-export { AbstractState } from './AbstractState';
-export { CommandableState } from './CommandableState';
-export { SimpleState } from './SimpleState';
-export { StateMachine } from './StateMachine';
+export { AbstractState } from './abstract-state';
+export { CommandableState } from './commandable-state';
+export { SimpleState } from './simple-state';
+export { StateMachine } from './state-machine';

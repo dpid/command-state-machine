@@ -1,4 +1,4 @@
-import type { ICommand } from './ICommand';
+import type { ICommand } from './i-command';
 
 export interface ICommandCollection {
   addCommand(command: ICommand): void;

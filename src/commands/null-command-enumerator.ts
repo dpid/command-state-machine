@@ -1,5 +1,5 @@
-import type { ICommand } from './ICommand';
-import type { ICommandEnumerator } from './ICommandEnumerator';
+import type { ICommand } from './i-command';
+import type { ICommandEnumerator } from './i-command-enumerator';
 
 export class NullCommandEnumerator implements ICommandEnumerator {
   private _parent: ICommandEnumerator | null = null;

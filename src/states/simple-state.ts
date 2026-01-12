@@ -1,5 +1,5 @@
-import type { IState } from './IState';
-import { AbstractState } from './AbstractState';
+import type { IState } from './i-state';
+import { AbstractState } from './abstract-state';
 
 export class SimpleState extends AbstractState {
   static create(name: string): IState {

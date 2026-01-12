@@ -1,4 +1,4 @@
-import type { ICommandEnumerator } from './ICommandEnumerator';
+import type { ICommandEnumerator } from './i-command-enumerator';
 
 export interface ICommand {
   parent: ICommandEnumerator | null;

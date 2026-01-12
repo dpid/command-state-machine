@@ -1,6 +1,6 @@
-import type { ICommand } from './ICommand';
-import type { IStateTransitionHandler } from '../states/IStateTransitionHandler';
-import { AbstractCommand } from './AbstractCommand';
+import type { ICommand } from './i-command';
+import type { IStateTransitionHandler } from '../states/i-state-transition-handler';
+import { AbstractCommand } from './abstract-command';
 
 export class CallTransition extends AbstractCommand {
   private handler: IStateTransitionHandler | null = null;

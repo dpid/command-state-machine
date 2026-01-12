@@ -1,7 +1,7 @@
-import type { ICommand } from '../commands/ICommand';
-import type { ICommandLayerCollection } from '../commands/ICommandLayerCollection';
-import { AbstractState } from './AbstractState';
-import { CommandPlayer } from '../commands/CommandPlayer';
+import type { ICommand } from '../commands/i-command';
+import type { ICommandLayerCollection } from '../commands/i-command-layer-collection';
+import { AbstractState } from './abstract-state';
+import { CommandPlayer } from '../commands/command-player';
 
 export class CommandableState extends AbstractState implements ICommandLayerCollection {
   private commandPlayer: CommandPlayer | null = null;

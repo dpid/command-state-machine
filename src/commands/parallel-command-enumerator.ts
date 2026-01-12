@@ -1,5 +1,5 @@
-import type { ICommand } from './ICommand';
-import { AbstractCommandEnumerator } from './AbstractCommandEnumerator';
+import type { ICommand } from './i-command';
+import { AbstractCommandEnumerator } from './abstract-command-enumerator';
 
 export class ParallelCommandEnumerator extends AbstractCommandEnumerator {
   protected override onStart(): void {

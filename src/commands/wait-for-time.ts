@@ -1,5 +1,5 @@
-import type { ICommand } from './ICommand';
-import { AbstractCommand } from './AbstractCommand';
+import type { ICommand } from './i-command';
+import { AbstractCommand } from './abstract-command';
 
 export class WaitForTime extends AbstractCommand {
   private timeoutId: ReturnType<typeof setTimeout> | null = null;

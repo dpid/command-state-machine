@@ -1,5 +1,5 @@
-import type { IState } from './IState';
-import type { IStateMachine } from './IStateMachine';
+import type { IState } from './i-state';
+import type { IStateMachine } from './i-state-machine';
 
 export abstract class AbstractState implements IState {
   protected _stateName: string = '';

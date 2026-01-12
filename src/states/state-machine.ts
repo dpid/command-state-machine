@@ -1,5 +1,5 @@
-import type { IState } from './IState';
-import type { IStateMachine, StateChangeCallback } from './IStateMachine';
+import type { IState } from './i-state';
+import type { IStateMachine, StateChangeCallback } from './i-state-machine';
 
 export class StateMachine implements IStateMachine {
   private stateChangeCallbacks: Set<StateChangeCallback> = new Set();

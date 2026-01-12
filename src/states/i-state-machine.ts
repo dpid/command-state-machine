@@ -1,5 +1,5 @@
-import type { IStateTransitionHandler } from './IStateTransitionHandler';
-import type { IState } from './IState';
+import type { IStateTransitionHandler } from './i-state-transition-handler';
+import type { IState } from './i-state';
 
 export type StateChangeCallback = (stateName: string) => void;
 
