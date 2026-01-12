@@ -1,24 +1,24 @@
-import type { ICommand } from './i-command';
-import type { ICommandEnumerator } from './i-command-enumerator';
+import type { Command } from './command.interface';
+import type { CommandEnumerator } from './command-enumerator.interface';
 import { NullCommandEnumerator } from './null-command-enumerator';
 
-export class NullCommand implements ICommand {
-  private _parent: ICommandEnumerator = NullCommandEnumerator.create();
+export class NullCommand implements Command {
+  private parentEnumerator: CommandEnumerator = NullCommandEnumerator.create();
 
   get isCompleted(): boolean {
     return true;
   }
 
-  get parent(): ICommandEnumerator | null {
-    return this._parent;
+  get parent(): CommandEnumerator | null {
+    return this.parentEnumerator;
   }
-  set parent(_value: ICommandEnumerator | null) {}
+  set parent(_value: CommandEnumerator | null) {}
 
   start(): void {}
   stop(): void {}
   destroy(): void {}
 
-  static create(): ICommand {
+  static create(): Command {
     return new NullCommand();
   }
 }

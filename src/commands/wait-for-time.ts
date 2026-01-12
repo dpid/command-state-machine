@@ -1,4 +1,4 @@
-import type { ICommand } from './i-command';
+import type { Command } from './command.interface';
 import { AbstractCommand } from './abstract-command';
 
 export class WaitForTime extends AbstractCommand {
@@ -25,7 +25,7 @@ export class WaitForTime extends AbstractCommand {
     this.onStop();
   }
 
-  static create(milliseconds: number): ICommand {
+  static create(milliseconds: number): Command {
     return new WaitForTime(milliseconds);
   }
 }

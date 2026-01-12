@@ -1,13 +1,13 @@
-import type { IState } from './i-state';
-import type { IStateMachine, StateChangeCallback } from './i-state-machine';
+import type { State } from './state.interface';
+import type { StateMachine, StateChangeCallback } from './state-machine.interface';
 
-export class StateMachine implements IStateMachine {
+export class StateMachineImpl implements StateMachine {
   private stateChangeCallbacks: Set<StateChangeCallback> = new Set();
-  protected stateDictionary: Map<string, IState> = new Map();
-  protected _currentState: IState | null = null;
+  protected stateDictionary: Map<string, State> = new Map();
+  protected activeState: State | null = null;
 
-  get currentState(): IState | null {
-    return this._currentState;
+  get currentState(): State | null {
+    return this.activeState;
   }
 
   onStateChange(callback: StateChangeCallback): void {
@@ -22,48 +22,45 @@ export class StateMachine implements IStateMachine {
     this.stateChangeCallbacks.forEach((callback) => callback(stateName));
   }
 
-  getState(stateName: string): IState | null {
+  getState(stateName: string): State | null {
     return this.stateDictionary.get(stateName) ?? null;
   }
 
-  setState(stateOrName: IState | string): void {
+  setState(stateOrName: State | string): void {
     if (typeof stateOrName === 'string') {
       const state = this.stateDictionary.get(stateOrName);
       if (state !== undefined) {
         this.setCurrentState(state);
       }
     } else {
-      const values = Array.from(this.stateDictionary.values());
-      if (values.includes(stateOrName)) {
-        this.setCurrentState(stateOrName);
-      }
+      this.setCurrentState(stateOrName);
     }
   }
 
-  private setCurrentState(state: IState): void {
-    if (this._currentState !== state) {
-      if (this._currentState !== null) {
-        this._currentState.exitState();
+  private setCurrentState(state: State): void {
+    if (this.activeState !== state) {
+      if (this.activeState !== null) {
+        this.activeState.exitState();
       }
-      this._currentState = state;
+      this.activeState = state;
       this.emitStateChange(state.stateName);
     }
-    this._currentState.enterState();
+    this.activeState.enterState();
   }
 
-  addState(state: IState): void {
+  addState(state: State): void {
     state.stateMachine = this;
     this.stateDictionary.set(state.stateName, state);
   }
 
-  removeState(state: IState): void {
+  removeState(state: State): void {
     state.stateMachine = null;
     this.stateDictionary.delete(state.stateName);
   }
 
   handleTransition(transitionName: string): void {
-    if (this._currentState !== null) {
-      this._currentState.handleTransition(transitionName);
+    if (this.activeState !== null) {
+      this.activeState.handleTransition(transitionName);
     }
   }
 
@@ -73,7 +70,9 @@ export class StateMachine implements IStateMachine {
     this.stateChangeCallbacks.clear();
   }
 
-  static create(): StateMachine {
-    return new StateMachine();
+  static create(): StateMachineImpl {
+    return new StateMachineImpl();
   }
 }
+
+export { StateMachineImpl as StateMachine };

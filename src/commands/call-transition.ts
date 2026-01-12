@@ -1,9 +1,9 @@
-import type { ICommand } from './i-command';
-import type { IStateTransitionHandler } from '../states/i-state-transition-handler';
+import type { Command } from './command.interface';
+import type { StateTransitionHandler } from '../states/state-transition-handler.interface';
 import { AbstractCommand } from './abstract-command';
 
 export class CallTransition extends AbstractCommand {
-  private handler: IStateTransitionHandler | null = null;
+  private handler: StateTransitionHandler | null = null;
   private transition: string = '';
 
   protected override onStart(): void {
@@ -13,7 +13,7 @@ export class CallTransition extends AbstractCommand {
     this.complete();
   }
 
-  static create(handler: IStateTransitionHandler, transition: string): ICommand {
+  static create(handler: StateTransitionHandler, transition: string): Command {
     const command = new CallTransition();
     command.handler = handler;
     command.transition = transition;

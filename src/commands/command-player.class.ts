@@ -1,17 +1,17 @@
-import type { ICommand } from './i-command';
-import type { ICommandEnumerator } from './i-command-enumerator';
-import type { ICommandPlayer } from './i-command-player';
+import type { Command } from './command.interface';
+import type { CommandEnumerator } from './command-enumerator.interface';
+import type { CommandPlayer } from './command-player.interface';
 import { AbstractCommand } from './abstract-command';
 import { SerialCommandEnumerator } from './serial-command-enumerator';
 import { ParallelCommandEnumerator } from './parallel-command-enumerator';
 
-export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
-  private parallelCommandEnumerator: ICommandEnumerator | null = null;
-  protected layers: ICommandEnumerator[] = [];
-  protected _loopCount: number = 0;
-  protected _currentLoop: number = 0;
+export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer {
+  private parallelCommandEnumerator: CommandEnumerator | null = null;
+  protected layers: CommandEnumerator[] = [];
+  protected loopCountValue: number = 0;
+  protected currentLoopValue: number = 0;
 
-  private get _parallelCommandEnumerator(): ICommandEnumerator {
+  private get parallelEnumerator(): CommandEnumerator {
     if (this.parallelCommandEnumerator === null) {
       this.parallelCommandEnumerator = new ParallelCommandEnumerator();
       this.parallelCommandEnumerator.parent = this;
@@ -20,21 +20,21 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
   }
 
   get loopCount(): number {
-    return this._loopCount;
+    return this.loopCountValue;
   }
   set loopCount(value: number) {
-    this._loopCount = value;
+    this.loopCountValue = value;
   }
 
   get currentLoop(): number {
-    return this._currentLoop;
+    return this.currentLoopValue;
   }
 
   get layersCount(): number {
     return this.layers.length;
   }
 
-  addCommand(command: ICommand, layer?: number): void {
+  addCommand(command: Command, layer?: number): void {
     const layerIndex = layer ?? -1;
     if (layerIndex < 0) {
       this.addCommandToLastLayer(command);
@@ -47,7 +47,7 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
     }
   }
 
-  private addCommandToLastLayer(command: ICommand): void {
+  private addCommandToLastLayer(command: Command): void {
     if (this.layersCount <= 0) {
       this.addLayer();
     }
@@ -57,12 +57,12 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
   }
 
   private addLayer(): void {
-    const layer: ICommandEnumerator = new SerialCommandEnumerator();
-    this._parallelCommandEnumerator.addCommand(layer);
+    const layer: CommandEnumerator = new SerialCommandEnumerator();
+    this.parallelEnumerator.addCommand(layer);
     this.layers.push(layer);
   }
 
-  removeCommand(command: ICommand, layer?: number): void {
+  removeCommand(command: Command, layer?: number): void {
     if (layer === undefined) {
       for (const l of this.layers) {
         if (l.hasCommand(command)) {
@@ -76,7 +76,7 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
     }
   }
 
-  hasCommand(command: ICommand): boolean {
+  hasCommand(command: Command): boolean {
     for (const layer of this.layers) {
       if (layer.hasCommand(command)) {
         return true;
@@ -85,11 +85,11 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
     return false;
   }
 
-  addCommandToLayer(command: ICommand, layer: number): void {
+  addCommandToLayer(command: Command, layer: number): void {
     this.addCommand(command, layer);
   }
 
-  removeCommandFromLayer(command: ICommand, layer: number): void {
+  removeCommandFromLayer(command: Command, layer: number): void {
     this.removeCommand(command, layer);
   }
 
@@ -112,10 +112,10 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
     return layerIndex >= 0 && layerIndex < this.layers.length;
   }
 
-  createLayer(loopCount: number = 0): ICommandEnumerator {
-    const layer: ICommandEnumerator = new SerialCommandEnumerator();
+  createLayer(loopCount: number = 0): CommandEnumerator {
+    const layer: CommandEnumerator = new SerialCommandEnumerator();
     layer.loopCount = loopCount;
-    this._parallelCommandEnumerator.addCommand(layer);
+    this.parallelEnumerator.addCommand(layer);
     this.layers.push(layer);
     return layer;
   }
@@ -123,21 +123,21 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
   destroyLayer(layerIndex: number): void {
     if (layerIndex < this.layersCount) {
       const selectedLayer = this.layers[layerIndex];
-      this._parallelCommandEnumerator.removeCommand(selectedLayer);
+      this.parallelEnumerator.removeCommand(selectedLayer);
       this.layers.splice(layerIndex, 1);
       selectedLayer.destroy();
     }
   }
 
-  handleCompletedCommand(command: ICommand): void {
-    if (!this._isCompleted) {
-      if (command === this._parallelCommandEnumerator) {
-        if (this._currentLoop <= 0 && this._loopCount < 0) {
+  handleCompletedCommand(command: Command): void {
+    if (!this.completed) {
+      if (command === this.parallelEnumerator) {
+        if (this.currentLoopValue <= 0 && this.loopCountValue < 0) {
           this.onStart();
-        } else if (this._currentLoop < this._loopCount - 1) {
-          const nextLoop = this._currentLoop + 1;
+        } else if (this.currentLoopValue < this.loopCountValue - 1) {
+          const nextLoop = this.currentLoopValue + 1;
           this.onStart();
-          this._currentLoop = nextLoop;
+          this.currentLoopValue = nextLoop;
         } else {
           this.complete();
         }
@@ -146,17 +146,19 @@ export class CommandPlayer extends AbstractCommand implements ICommandPlayer {
   }
 
   protected override onStart(): void {
-    this._currentLoop = 0;
-    this._isCompleted = false;
-    this._parallelCommandEnumerator.start();
+    this.currentLoopValue = 0;
+    this.completed = false;
+    this.parallelEnumerator.start();
   }
 
   protected override onStop(): void {
-    this._parallelCommandEnumerator.stop();
+    this.parallelEnumerator.stop();
   }
 
   protected override onDestroy(): void {
-    this._parallelCommandEnumerator.destroy();
+    this.parallelEnumerator.destroy();
     this.layers.length = 0;
   }
 }
+
+export { CommandPlayerImpl as CommandPlayer };

@@ -1,13 +1,13 @@
-import type { ICommand } from './i-command';
-import type { ICommandEnumerator } from './i-command-enumerator';
+import type { Command } from './command.interface';
+import type { CommandEnumerator } from './command-enumerator.interface';
 
-export class NullCommandEnumerator implements ICommandEnumerator {
-  private _parent: ICommandEnumerator | null = null;
+export class NullCommandEnumerator implements CommandEnumerator {
+  private parentEnumerator: CommandEnumerator | null = null;
 
-  get parent(): ICommandEnumerator | null {
-    return this._parent;
+  get parent(): CommandEnumerator | null {
+    return this.parentEnumerator;
   }
-  set parent(_value: ICommandEnumerator | null) {}
+  set parent(_value: CommandEnumerator | null) {}
 
   get isCompleted(): boolean {
     return true;
@@ -26,15 +26,15 @@ export class NullCommandEnumerator implements ICommandEnumerator {
     return -1;
   }
 
-  handleCompletedCommand(_command: ICommand): void {}
+  handleCompletedCommand(_command: Command): void {}
 
-  addCommand(_command: ICommand): void {}
-  removeCommand(_command: ICommand): void {}
-  hasCommand(_command: ICommand): boolean {
+  addCommand(_command: Command): void {}
+  removeCommand(_command: Command): void {}
+  hasCommand(_command: Command): boolean {
     return false;
   }
 
-  static create(): ICommandEnumerator {
+  static create(): CommandEnumerator {
     return new NullCommandEnumerator();
   }
 }

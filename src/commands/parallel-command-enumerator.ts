@@ -1,10 +1,10 @@
-import type { ICommand } from './i-command';
+import type { Command } from './command.interface';
 import { AbstractCommandEnumerator } from './abstract-command-enumerator';
 
 export class ParallelCommandEnumerator extends AbstractCommandEnumerator {
   protected override onStart(): void {
-    this._currentLoop = 0;
-    this._isCompleted = false;
+    this.currentLoopValue = 0;
+    this.completed = false;
     this.isActive = true;
     this.commands.forEach((command) => command.start());
   }
@@ -20,20 +20,20 @@ export class ParallelCommandEnumerator extends AbstractCommandEnumerator {
     this.commands.length = 0;
   }
 
-  override handleCompletedCommand(command: ICommand): void {
-    if (!this._isCompleted) {
+  override handleCompletedCommand(command: Command): void {
+    if (!this.completed) {
       const index = this.commands.indexOf(command);
       if (index >= 0) {
         const isAllCommandsCompleted = this.commands.every((cmd) =>
           this.getIsCommandCompleted(cmd)
         );
         if (isAllCommandsCompleted) {
-          const isLoopsRemaining = this._currentLoop < this._loopCount - 1;
-          const isInfiniteLooping = this._loopCount < 0;
+          const isLoopsRemaining = this.currentLoopValue < this.loopCountValue - 1;
+          const isInfiniteLooping = this.loopCountValue < 0;
           if (isLoopsRemaining || isInfiniteLooping) {
-            const nextLoop = this._currentLoop + 1;
+            const nextLoop = this.currentLoopValue + 1;
             this.onStart();
-            this._currentLoop = nextLoop;
+            this.currentLoopValue = nextLoop;
           } else {
             this.complete();
           }

@@ -1,13 +1,13 @@
-export type { ICommand } from './i-command';
-export type { ICommandCollection } from './i-command-collection';
-export type { ICommandEnumerator } from './i-command-enumerator';
-export type { ICommandLayerCollection } from './i-command-layer-collection';
-export type { ICommandPlayer } from './i-command-player';
+export type { Command } from './command.interface';
+export type { CommandCollection } from './command-collection.interface';
+export type { CommandEnumerator } from './command-enumerator.interface';
+export type { CommandLayerCollection } from './command-layer-collection.interface';
+export type { CommandPlayer as CommandPlayerType } from './command-player.interface';
 
 export { AbstractCommand } from './abstract-command';
 export { AbstractCommandEnumerator } from './abstract-command-enumerator';
 export { CallTransition } from './call-transition';
-export { CommandPlayer } from './command-player';
+export { CommandPlayer } from './command-player.class';
 export { NullCommand } from './null-command';
 export { NullCommandEnumerator } from './null-command-enumerator';
 export { ParallelCommandEnumerator } from './parallel-command-enumerator';

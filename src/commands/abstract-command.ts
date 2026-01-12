@@ -1,24 +1,24 @@
-import type { ICommand } from './i-command';
-import type { ICommandEnumerator } from './i-command-enumerator';
+import type { Command } from './command.interface';
+import type { CommandEnumerator } from './command-enumerator.interface';
 import { NullCommandEnumerator } from './null-command-enumerator';
 
-export abstract class AbstractCommand implements ICommand {
-  protected _isCompleted: boolean = false;
-  protected _parent: ICommandEnumerator = NullCommandEnumerator.create();
+export abstract class AbstractCommand implements Command {
+  protected completed: boolean = false;
+  protected parentEnumerator: CommandEnumerator = NullCommandEnumerator.create();
 
   get isCompleted(): boolean {
-    return this._isCompleted;
+    return this.completed;
   }
 
-  get parent(): ICommandEnumerator | null {
-    return this._parent;
+  get parent(): CommandEnumerator | null {
+    return this.parentEnumerator;
   }
-  set parent(value: ICommandEnumerator | null) {
-    this._parent = value ?? NullCommandEnumerator.create();
+  set parent(value: CommandEnumerator | null) {
+    this.parentEnumerator = value ?? NullCommandEnumerator.create();
   }
 
   start(): void {
-    this._isCompleted = false;
+    this.completed = false;
     this.onStart();
   }
 
@@ -32,8 +32,8 @@ export abstract class AbstractCommand implements ICommand {
   }
 
   protected complete(): void {
-    this._isCompleted = true;
-    this._parent.handleCompletedCommand(this);
+    this.completed = true;
+    this.parentEnumerator.handleCompletedCommand(this);
   }
 
   protected onStart(): void {}

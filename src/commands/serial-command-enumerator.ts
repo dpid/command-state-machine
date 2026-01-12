@@ -1,11 +1,11 @@
-import type { ICommand } from './i-command';
+import type { Command } from './command.interface';
 import { AbstractCommandEnumerator } from './abstract-command-enumerator';
 import { NullCommand } from './null-command';
 
 export class SerialCommandEnumerator extends AbstractCommandEnumerator {
   protected currentIndex: number = 0;
 
-  protected get currentCommand(): ICommand {
+  protected get currentCommand(): Command {
     if (this.currentIndex < 0 || this.currentIndex > this.commands.length - 1) {
       return NullCommand.create();
     }
@@ -14,8 +14,8 @@ export class SerialCommandEnumerator extends AbstractCommandEnumerator {
 
   protected override onStart(): void {
     this.currentIndex = 0;
-    this._currentLoop = 0;
-    this._isCompleted = false;
+    this.currentLoopValue = 0;
+    this.completed = false;
     this.isActive = true;
 
     if (this.commandsCount > 0) {
@@ -33,27 +33,27 @@ export class SerialCommandEnumerator extends AbstractCommandEnumerator {
     this.commands.forEach((command) => command.destroy());
     this.commands.length = 0;
     this.currentIndex = 0;
-    this._currentLoop = 0;
+    this.currentLoopValue = 0;
   }
 
-  override handleCompletedCommand(command: ICommand): void {
-    if (this.isActive && !this._isCompleted && command === this.currentCommand) {
+  override handleCompletedCommand(command: Command): void {
+    if (this.isActive && !this.completed && command === this.currentCommand) {
       this.startNextCommand();
     }
   }
 
   protected startNextCommand(): void {
     const isCommandsRemaining = this.currentIndex < this.commandsCount - 1;
-    const isLoopsRemaining = this._currentLoop < this._loopCount;
-    const isInfiniteLooping = this._loopCount < 0;
+    const isLoopsRemaining = this.currentLoopValue < this.loopCountValue;
+    const isInfiniteLooping = this.loopCountValue < 0;
 
     if (isCommandsRemaining) {
       this.currentIndex += 1;
       this.currentCommand.start();
     } else if (isLoopsRemaining || isInfiniteLooping) {
-      const nextLoop = this._currentLoop + 1;
+      const nextLoop = this.currentLoopValue + 1;
       this.onStart();
-      this._currentLoop = nextLoop;
+      this.currentLoopValue = nextLoop;
     } else {
       this.complete();
     }

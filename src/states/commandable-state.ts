@@ -1,69 +1,69 @@
-import type { ICommand } from '../commands/i-command';
-import type { ICommandLayerCollection } from '../commands/i-command-layer-collection';
+import type { Command } from '../commands/command.interface';
+import type { CommandLayerCollection } from '../commands/command-layer-collection.interface';
 import { AbstractState } from './abstract-state';
-import { CommandPlayer } from '../commands/command-player';
+import { CommandPlayer } from '../commands/command-player.class';
 
-export class CommandableState extends AbstractState implements ICommandLayerCollection {
+export class CommandableState extends AbstractState implements CommandLayerCollection {
   private commandPlayer: CommandPlayer | null = null;
 
-  private get _commandPlayer(): CommandPlayer {
+  private get player(): CommandPlayer {
     if (this.commandPlayer === null) {
       this.commandPlayer = new CommandPlayer();
     }
     return this.commandPlayer;
   }
 
-  addCommand(command: ICommand, layer?: number): void {
+  addCommand(command: Command, layer?: number): void {
     if (layer !== undefined) {
-      this._commandPlayer.addCommand(command, layer);
+      this.player.addCommand(command, layer);
     } else {
-      this._commandPlayer.addCommand(command);
+      this.player.addCommand(command);
     }
   }
 
-  addCommandToLayer(command: ICommand, layer: number): void {
-    this._commandPlayer.addCommandToLayer(command, layer);
+  addCommandToLayer(command: Command, layer: number): void {
+    this.player.addCommandToLayer(command, layer);
   }
 
-  removeCommand(command: ICommand, layer?: number): void {
+  removeCommand(command: Command, layer?: number): void {
     if (layer !== undefined) {
-      this._commandPlayer.removeCommand(command, layer);
+      this.player.removeCommand(command, layer);
     } else {
-      this._commandPlayer.removeCommand(command);
+      this.player.removeCommand(command);
     }
   }
 
-  removeCommandFromLayer(command: ICommand, layer: number): void {
-    this._commandPlayer.removeCommandFromLayer(command, layer);
+  removeCommandFromLayer(command: Command, layer: number): void {
+    this.player.removeCommandFromLayer(command, layer);
   }
 
   getLayerLoopCount(layer: number): number {
-    return this._commandPlayer.getLayerLoopCount(layer);
+    return this.player.getLayerLoopCount(layer);
   }
 
   setLayerLoopCount(layer: number, loopCount: number): void {
-    this._commandPlayer.setLayerLoopCount(layer, loopCount);
+    this.player.setLayerLoopCount(layer, loopCount);
   }
 
-  hasCommand(command: ICommand): boolean {
-    return this._commandPlayer.hasCommand(command);
+  hasCommand(command: Command): boolean {
+    return this.player.hasCommand(command);
   }
 
   override enterState(): void {
-    this._commandPlayer.start();
+    this.player.start();
   }
 
   override exitState(): void {
-    this._commandPlayer.stop();
+    this.player.stop();
   }
 
   override destroy(): void {
-    this._commandPlayer.destroy();
+    this.player.destroy();
   }
 
   static create(name: string): CommandableState {
     const state = new CommandableState();
-    state._stateName = name;
+    state.name = name;
     return state;
   }
 }
