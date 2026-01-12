@@ -6,6 +6,7 @@ import {
   SerialCommandEnumerator,
   ParallelCommandEnumerator,
   WaitForTime,
+  CallTransition,
   type ICommand,
 } from './src';
 
@@ -130,6 +131,43 @@ async function testLayeredCommands(): Promise<void> {
   console.log('  PASSED\n');
 }
 
+async function testCallTransition(): Promise<void> {
+  console.log('Test 6: CallTransition Command');
+
+  const sm = StateMachine.Create();
+
+  const stateA = CommandableState.Create('StateA');
+  const stateB = CommandableState.Create('StateB');
+  const stateC = SimpleState.Create('StateC');
+
+  stateA.AddTransition('goToB', stateB);
+  stateB.AddTransition('goToC', stateC);
+
+  sm.AddState(stateA);
+  sm.AddState(stateB);
+  sm.AddState(stateC);
+
+  sm.OnStateChange((name) => console.log(`  State changed to: ${name}`));
+
+  // Add commands to StateA that will trigger transition to StateB
+  stateA.AddCommand(LogCommand.Create('StateA: Starting'));
+  stateA.AddCommand(LogCommand.Create('StateA: About to transition...'));
+  stateA.AddCommand(CallTransition.Create(stateA, 'goToB'));
+
+  // Add commands to StateB that will trigger transition to StateC
+  stateB.AddCommand(LogCommand.Create('StateB: Starting'));
+  stateB.AddCommand(CallTransition.Create(stateB, 'goToC'));
+
+  sm.SetState('StateA');
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  console.log(`  Final state: ${sm.CurrentState?.StateName}`);
+
+  sm.Destroy();
+  console.log('  PASSED\n');
+}
+
 async function main(): Promise<void> {
   console.log('=== Command State Machine Tests ===\n');
 
@@ -138,6 +176,7 @@ async function main(): Promise<void> {
   await testWaitForTime();
   await testParallelCommands();
   await testLayeredCommands();
+  await testCallTransition();
 
   console.log('=== All Tests Passed ===');
 }

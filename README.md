@@ -171,6 +171,33 @@ state.SetLayerLoopCount(0, 3);
 state.SetLayerLoopCount(0, -1);
 ```
 
+## Automatic State Transitions
+
+Use `CallTransition` to trigger state transitions from within a command sequence:
+
+```typescript
+import { StateMachine, CommandableState, CallTransition } from '@dpid/command-state-machine';
+
+const sm = StateMachine.Create();
+
+const intro = CommandableState.Create('intro');
+const gameplay = CommandableState.Create('gameplay');
+
+intro.AddTransition('start', gameplay);
+
+// Commands execute, then automatically transition to gameplay
+intro.AddCommand(LogCommand.Create('Welcome to the game!'));
+intro.AddCommand(WaitForTime.Create(2000));
+intro.AddCommand(LogCommand.Create('Starting...'));
+intro.AddCommand(CallTransition.Create(intro, 'start'));
+
+sm.AddState(intro);
+sm.AddState(gameplay);
+
+sm.SetState('intro');
+// After commands complete, automatically transitions to 'gameplay'
+```
+
 ## API Reference
 
 ### State Machine
@@ -187,6 +214,7 @@ state.SetLayerLoopCount(0, -1);
 | Class | Description |
 |-------|-------------|
 | `AbstractCommand` | Base class for custom commands |
+| `CallTransition` | Triggers a state transition |
 | `WaitForTime` | Waits for specified milliseconds |
 | `SerialCommandEnumerator` | Runs commands sequentially |
 | `ParallelCommandEnumerator` | Runs commands simultaneously |

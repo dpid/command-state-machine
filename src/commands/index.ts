@@ -6,6 +6,7 @@ export type { ICommandPlayer } from './ICommandPlayer';
 
 export { AbstractCommand } from './AbstractCommand';
 export { AbstractCommandEnumerator } from './AbstractCommandEnumerator';
+export { CallTransition } from './CallTransition';
 export { CommandPlayer } from './CommandPlayer';
 export { NullCommand } from './NullCommand';
 export { NullCommandEnumerator } from './NullCommandEnumerator';
