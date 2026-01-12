@@ -44,8 +44,8 @@ export class StateMachineImpl implements StateMachine {
       }
       this.activeState = state;
       this.emitStateChange(state.stateName);
+      this.activeState.enterState();
     }
-    this.activeState.enterState();
   }
 
   addState(state: State): void {
