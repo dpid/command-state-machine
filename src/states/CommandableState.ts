@@ -6,64 +6,64 @@ import { CommandPlayer } from '../commands/CommandPlayer';
 export class CommandableState extends AbstractState implements ICommandLayerCollection {
   private commandPlayer: CommandPlayer | null = null;
 
-  private get CommandPlayer(): CommandPlayer {
+  private get _commandPlayer(): CommandPlayer {
     if (this.commandPlayer === null) {
       this.commandPlayer = new CommandPlayer();
     }
     return this.commandPlayer;
   }
 
-  AddCommand(command: ICommand, layer?: number): void {
+  addCommand(command: ICommand, layer?: number): void {
     if (layer !== undefined) {
-      this.CommandPlayer.AddCommand(command, layer);
+      this._commandPlayer.addCommand(command, layer);
     } else {
-      this.CommandPlayer.AddCommand(command);
+      this._commandPlayer.addCommand(command);
     }
   }
 
-  AddCommandToLayer(command: ICommand, layer: number): void {
-    this.CommandPlayer.AddCommandToLayer(command, layer);
+  addCommandToLayer(command: ICommand, layer: number): void {
+    this._commandPlayer.addCommandToLayer(command, layer);
   }
 
-  RemoveCommand(command: ICommand, layer?: number): void {
+  removeCommand(command: ICommand, layer?: number): void {
     if (layer !== undefined) {
-      this.CommandPlayer.RemoveCommand(command, layer);
+      this._commandPlayer.removeCommand(command, layer);
     } else {
-      this.CommandPlayer.RemoveCommand(command);
+      this._commandPlayer.removeCommand(command);
     }
   }
 
-  RemoveCommandFromLayer(command: ICommand, layer: number): void {
-    this.CommandPlayer.RemoveCommandFromLayer(command, layer);
+  removeCommandFromLayer(command: ICommand, layer: number): void {
+    this._commandPlayer.removeCommandFromLayer(command, layer);
   }
 
-  GetLayerLoopCount(layer: number): number {
-    return this.CommandPlayer.GetLayerLoopCount(layer);
+  getLayerLoopCount(layer: number): number {
+    return this._commandPlayer.getLayerLoopCount(layer);
   }
 
-  SetLayerLoopCount(layer: number, loopCount: number): void {
-    this.CommandPlayer.SetLayerLoopCount(layer, loopCount);
+  setLayerLoopCount(layer: number, loopCount: number): void {
+    this._commandPlayer.setLayerLoopCount(layer, loopCount);
   }
 
-  HasCommand(command: ICommand): boolean {
-    return this.CommandPlayer.HasCommand(command);
+  hasCommand(command: ICommand): boolean {
+    return this._commandPlayer.hasCommand(command);
   }
 
-  override EnterState(): void {
-    this.CommandPlayer.Start();
+  override enterState(): void {
+    this._commandPlayer.start();
   }
 
-  override ExitState(): void {
-    this.CommandPlayer.Stop();
+  override exitState(): void {
+    this._commandPlayer.stop();
   }
 
-  override Destroy(): void {
-    this.CommandPlayer.Destroy();
+  override destroy(): void {
+    this._commandPlayer.destroy();
   }
 
-  static Create(name: string): CommandableState {
+  static create(name: string): CommandableState {
     const state = new CommandableState();
-    state.stateName = name;
+    state._stateName = name;
     return state;
   }
 }

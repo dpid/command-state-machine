@@ -1,10 +1,10 @@
 import type { ICommandEnumerator } from './ICommandEnumerator';
 
 export interface ICommand {
-  Parent: ICommandEnumerator | null;
-  readonly IsCompleted: boolean;
+  parent: ICommandEnumerator | null;
+  readonly isCompleted: boolean;
 
-  Start(): void;
-  Stop(): void;
-  Destroy(): void;
+  start(): void;
+  stop(): void;
+  destroy(): void;
 }

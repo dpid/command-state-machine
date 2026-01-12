@@ -2,16 +2,16 @@ import type { IStateTransitionHandler } from './IStateTransitionHandler';
 import type { IStateMachine } from './IStateMachine';
 
 export interface IState extends IStateTransitionHandler {
-  readonly StateName: string;
+  readonly stateName: string;
 
-  StateMachine: IStateMachine | null;
+  stateMachine: IStateMachine | null;
 
-  AddTransition(transitionName: string, toState: IState): void;
-  AddTransition(transitionName: string, toStateName: string): void;
-  RemoveTransition(transitionName: string): void;
+  addTransition(transitionName: string, toState: IState): void;
+  addTransition(transitionName: string, toStateName: string): void;
+  removeTransition(transitionName: string): void;
 
-  EnterState(): void;
-  ExitState(): void;
+  enterState(): void;
+  exitState(): void;
 
-  Destroy(): void;
+  destroy(): void;
 }

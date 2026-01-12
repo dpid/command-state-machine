@@ -20,7 +20,7 @@ class LogCommand extends AbstractCommand {
     this.complete();
   }
 
-  static Create(message: string): ICommand {
+  static create(message: string): ICommand {
     return new LogCommand(message);
   }
 }
@@ -28,64 +28,64 @@ class LogCommand extends AbstractCommand {
 async function testBasicStateMachine(): Promise<void> {
   console.log('Test 1: Basic State Machine');
 
-  const sm = StateMachine.Create();
+  const sm = StateMachine.create();
 
-  const stateA = SimpleState.Create('StateA');
-  const stateB = SimpleState.Create('StateB');
+  const stateA = SimpleState.create('StateA');
+  const stateB = SimpleState.create('StateB');
 
-  stateA.AddTransition('next', stateB);
-  stateB.AddTransition('back', stateA);
+  stateA.addTransition('next', stateB);
+  stateB.addTransition('back', stateA);
 
-  sm.AddState(stateA);
-  sm.AddState(stateB);
+  sm.addState(stateA);
+  sm.addState(stateB);
 
-  sm.OnStateChange((name) => console.log(`  State changed to: ${name}`));
+  sm.onStateChange((name) => console.log(`  State changed to: ${name}`));
 
-  sm.SetState('StateA');
-  sm.HandleTransition('next');
-  sm.HandleTransition('back');
+  sm.setState('StateA');
+  sm.handleTransition('next');
+  sm.handleTransition('back');
 
-  sm.Destroy();
+  sm.destroy();
   console.log('  PASSED\n');
 }
 
 async function testCommandableState(): Promise<void> {
   console.log('Test 2: CommandableState with Serial Commands');
 
-  const state = CommandableState.Create('TestState');
+  const state = CommandableState.create('TestState');
 
-  state.AddCommand(LogCommand.Create('First command'));
-  state.AddCommand(LogCommand.Create('Second command'));
-  state.AddCommand(LogCommand.Create('Third command'));
+  state.addCommand(LogCommand.create('First command'));
+  state.addCommand(LogCommand.create('Second command'));
+  state.addCommand(LogCommand.create('Third command'));
 
-  state.EnterState();
+  state.enterState();
 
   await new Promise((resolve) => setTimeout(resolve, 50));
 
-  state.ExitState();
-  state.Destroy();
+  state.exitState();
+  state.destroy();
   console.log('  PASSED\n');
 }
 
 async function testWaitForTime(): Promise<void> {
   console.log('Test 3: WaitForTime Command');
 
-  const state = CommandableState.Create('TimedState');
+  const state = CommandableState.create('TimedState');
 
   const start = Date.now();
 
-  state.AddCommand(LogCommand.Create('Before wait'));
-  state.AddCommand(WaitForTime.Create(100));
-  state.AddCommand(LogCommand.Create('After wait'));
+  state.addCommand(LogCommand.create('Before wait'));
+  state.addCommand(WaitForTime.create(100));
+  state.addCommand(LogCommand.create('After wait'));
 
-  state.EnterState();
+  state.enterState();
 
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   const elapsed = Date.now() - start;
   console.log(`  Elapsed time: ${elapsed}ms (expected ~100ms+)`);
 
-  state.Destroy();
+  state.destroy();
   console.log('  PASSED\n');
 }
 
@@ -95,76 +95,74 @@ async function testParallelCommands(): Promise<void> {
   const parallel = new ParallelCommandEnumerator();
 
   const serial1 = new SerialCommandEnumerator();
-  serial1.AddCommand(LogCommand.Create('Parallel A - Step 1'));
-  serial1.AddCommand(LogCommand.Create('Parallel A - Step 2'));
+  serial1.addCommand(LogCommand.create('Parallel A - Step 1'));
+  serial1.addCommand(LogCommand.create('Parallel A - Step 2'));
 
   const serial2 = new SerialCommandEnumerator();
-  serial2.AddCommand(LogCommand.Create('Parallel B - Step 1'));
-  serial2.AddCommand(LogCommand.Create('Parallel B - Step 2'));
+  serial2.addCommand(LogCommand.create('Parallel B - Step 1'));
+  serial2.addCommand(LogCommand.create('Parallel B - Step 2'));
 
-  parallel.AddCommand(serial1);
-  parallel.AddCommand(serial2);
+  parallel.addCommand(serial1);
+  parallel.addCommand(serial2);
 
-  parallel.Start();
+  parallel.start();
 
   await new Promise((resolve) => setTimeout(resolve, 50));
 
-  parallel.Destroy();
+  parallel.destroy();
   console.log('  PASSED\n');
 }
 
 async function testLayeredCommands(): Promise<void> {
   console.log('Test 5: Layered Commands in CommandableState');
 
-  const state = CommandableState.Create('LayeredState');
+  const state = CommandableState.create('LayeredState');
 
-  state.AddCommandToLayer(LogCommand.Create('Layer 0 - Command 1'), 0);
-  state.AddCommandToLayer(LogCommand.Create('Layer 0 - Command 2'), 0);
-  state.AddCommandToLayer(LogCommand.Create('Layer 1 - Command 1'), 1);
-  state.AddCommandToLayer(LogCommand.Create('Layer 1 - Command 2'), 1);
+  state.addCommandToLayer(LogCommand.create('Layer 0 - Command 1'), 0);
+  state.addCommandToLayer(LogCommand.create('Layer 0 - Command 2'), 0);
+  state.addCommandToLayer(LogCommand.create('Layer 1 - Command 1'), 1);
+  state.addCommandToLayer(LogCommand.create('Layer 1 - Command 2'), 1);
 
-  state.EnterState();
+  state.enterState();
 
   await new Promise((resolve) => setTimeout(resolve, 50));
 
-  state.Destroy();
+  state.destroy();
   console.log('  PASSED\n');
 }
 
 async function testCallTransition(): Promise<void> {
   console.log('Test 6: CallTransition Command');
 
-  const sm = StateMachine.Create();
+  const sm = StateMachine.create();
 
-  const stateA = CommandableState.Create('StateA');
-  const stateB = CommandableState.Create('StateB');
-  const stateC = SimpleState.Create('StateC');
+  const stateA = CommandableState.create('StateA');
+  const stateB = CommandableState.create('StateB');
+  const stateC = SimpleState.create('StateC');
 
-  stateA.AddTransition('goToB', stateB);
-  stateB.AddTransition('goToC', stateC);
+  stateA.addTransition('goToB', stateB);
+  stateB.addTransition('goToC', stateC);
 
-  sm.AddState(stateA);
-  sm.AddState(stateB);
-  sm.AddState(stateC);
+  sm.addState(stateA);
+  sm.addState(stateB);
+  sm.addState(stateC);
 
-  sm.OnStateChange((name) => console.log(`  State changed to: ${name}`));
+  sm.onStateChange((name) => console.log(`  State changed to: ${name}`));
 
-  // Add commands to StateA that will trigger transition to StateB
-  stateA.AddCommand(LogCommand.Create('StateA: Starting'));
-  stateA.AddCommand(LogCommand.Create('StateA: About to transition...'));
-  stateA.AddCommand(CallTransition.Create(stateA, 'goToB'));
+  stateA.addCommand(LogCommand.create('StateA: Starting'));
+  stateA.addCommand(LogCommand.create('StateA: About to transition...'));
+  stateA.addCommand(CallTransition.create(stateA, 'goToB'));
 
-  // Add commands to StateB that will trigger transition to StateC
-  stateB.AddCommand(LogCommand.Create('StateB: Starting'));
-  stateB.AddCommand(CallTransition.Create(stateB, 'goToC'));
+  stateB.addCommand(LogCommand.create('StateB: Starting'));
+  stateB.addCommand(CallTransition.create(stateB, 'goToC'));
 
-  sm.SetState('StateA');
+  sm.setState('StateA');
 
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  console.log(`  Final state: ${sm.CurrentState?.StateName}`);
+  console.log(`  Final state: ${sm.currentState?.stateName}`);
 
-  sm.Destroy();
+  sm.destroy();
   console.log('  PASSED\n');
 }
 

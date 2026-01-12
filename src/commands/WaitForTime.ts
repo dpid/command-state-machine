@@ -25,7 +25,7 @@ export class WaitForTime extends AbstractCommand {
     this.onStop();
   }
 
-  static Create(milliseconds: number): ICommand {
+  static create(milliseconds: number): ICommand {
     return new WaitForTime(milliseconds);
   }
 }

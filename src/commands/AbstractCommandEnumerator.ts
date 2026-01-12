@@ -5,44 +5,44 @@ import { AbstractCommand } from './AbstractCommand';
 export class AbstractCommandEnumerator extends AbstractCommand implements ICommandEnumerator {
   protected commands: ICommand[] = [];
   protected isActive: boolean = false;
-  protected loopCount: number = 0;
-  protected currentLoop: number = 0;
+  protected _loopCount: number = 0;
+  protected _currentLoop: number = 0;
 
-  protected get CommandsCount(): number {
+  protected get commandsCount(): number {
     return this.commands.length;
   }
 
-  get LoopCount(): number {
-    return this.loopCount;
+  get loopCount(): number {
+    return this._loopCount;
   }
-  set LoopCount(value: number) {
-    this.loopCount = value;
-  }
-
-  get CurrentLoop(): number {
-    return this.currentLoop;
+  set loopCount(value: number) {
+    this._loopCount = value;
   }
 
-  AddCommand(command: ICommand): void {
+  get currentLoop(): number {
+    return this._currentLoop;
+  }
+
+  addCommand(command: ICommand): void {
     this.commands.push(command);
-    command.Parent = this;
+    command.parent = this;
   }
 
-  RemoveCommand(command: ICommand): void {
-    command.Stop();
+  removeCommand(command: ICommand): void {
+    command.stop();
     const index = this.commands.indexOf(command);
     if (index >= 0) {
       this.commands.splice(index, 1);
     }
   }
 
-  HasCommand(command: ICommand): boolean {
+  hasCommand(command: ICommand): boolean {
     return this.commands.indexOf(command) >= 0;
   }
 
-  HandleCompletedCommand(_command: ICommand): void {}
+  handleCompletedCommand(_command: ICommand): void {}
 
   protected getIsCommandCompleted(command: ICommand): boolean {
-    return command.IsCompleted;
+    return command.isCompleted;
   }
 }

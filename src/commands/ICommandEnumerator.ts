@@ -2,8 +2,8 @@ import type { ICommand } from './ICommand';
 import type { ICommandCollection } from './ICommandCollection';
 
 export interface ICommandEnumerator extends ICommand, ICommandCollection {
-  LoopCount: number;
-  readonly CurrentLoop: number;
+  loopCount: number;
+  readonly currentLoop: number;
 
-  HandleCompletedCommand(command: ICommand): void;
+  handleCompletedCommand(command: ICommand): void;
 }

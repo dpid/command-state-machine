@@ -8,12 +8,12 @@ export class CallTransition extends AbstractCommand {
 
   protected override onStart(): void {
     if (this.handler !== null && this.transition) {
-      this.handler.HandleTransition(this.transition);
+      this.handler.handleTransition(this.transition);
     }
     this.complete();
   }
 
-  static Create(handler: IStateTransitionHandler, transition: string): ICommand {
+  static create(handler: IStateTransitionHandler, transition: string): ICommand {
     const command = new CallTransition();
     command.handler = handler;
     command.transition = transition;

@@ -2,39 +2,39 @@ import type { ICommand } from './ICommand';
 import type { ICommandEnumerator } from './ICommandEnumerator';
 
 export class NullCommandEnumerator implements ICommandEnumerator {
-  private parent: ICommandEnumerator | null = null;
+  private _parent: ICommandEnumerator | null = null;
 
-  get Parent(): ICommandEnumerator | null {
-    return this.parent;
+  get parent(): ICommandEnumerator | null {
+    return this._parent;
   }
-  set Parent(_value: ICommandEnumerator | null) {}
+  set parent(_value: ICommandEnumerator | null) {}
 
-  get IsCompleted(): boolean {
+  get isCompleted(): boolean {
     return true;
   }
 
-  Start(): void {}
-  Stop(): void {}
-  Destroy(): void {}
+  start(): void {}
+  stop(): void {}
+  destroy(): void {}
 
-  get LoopCount(): number {
+  get loopCount(): number {
     return 0;
   }
-  set LoopCount(_value: number) {}
+  set loopCount(_value: number) {}
 
-  get CurrentLoop(): number {
+  get currentLoop(): number {
     return -1;
   }
 
-  HandleCompletedCommand(_command: ICommand): void {}
+  handleCompletedCommand(_command: ICommand): void {}
 
-  AddCommand(_command: ICommand): void {}
-  RemoveCommand(_command: ICommand): void {}
-  HasCommand(_command: ICommand): boolean {
+  addCommand(_command: ICommand): void {}
+  removeCommand(_command: ICommand): void {}
+  hasCommand(_command: ICommand): boolean {
     return false;
   }
 
-  static Create(): ICommandEnumerator {
+  static create(): ICommandEnumerator {
     return new NullCommandEnumerator();
   }
 }

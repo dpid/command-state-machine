@@ -3,37 +3,37 @@ import type { ICommandEnumerator } from './ICommandEnumerator';
 import { NullCommandEnumerator } from './NullCommandEnumerator';
 
 export abstract class AbstractCommand implements ICommand {
-  protected isCompleted: boolean = false;
-  protected parent: ICommandEnumerator = NullCommandEnumerator.Create();
+  protected _isCompleted: boolean = false;
+  protected _parent: ICommandEnumerator = NullCommandEnumerator.create();
 
-  get IsCompleted(): boolean {
-    return this.isCompleted;
+  get isCompleted(): boolean {
+    return this._isCompleted;
   }
 
-  get Parent(): ICommandEnumerator | null {
-    return this.parent;
+  get parent(): ICommandEnumerator | null {
+    return this._parent;
   }
-  set Parent(value: ICommandEnumerator | null) {
-    this.parent = value ?? NullCommandEnumerator.Create();
+  set parent(value: ICommandEnumerator | null) {
+    this._parent = value ?? NullCommandEnumerator.create();
   }
 
-  Start(): void {
-    this.isCompleted = false;
+  start(): void {
+    this._isCompleted = false;
     this.onStart();
   }
 
-  Stop(): void {
+  stop(): void {
     this.onStop();
     this.complete();
   }
 
-  Destroy(): void {
+  destroy(): void {
     this.onDestroy();
   }
 
   protected complete(): void {
-    this.isCompleted = true;
-    this.parent.HandleCompletedCommand(this);
+    this._isCompleted = true;
+    this._parent.handleCompletedCommand(this);
   }
 
   protected onStart(): void {}

@@ -3,22 +3,22 @@ import type { ICommandEnumerator } from './ICommandEnumerator';
 import { NullCommandEnumerator } from './NullCommandEnumerator';
 
 export class NullCommand implements ICommand {
-  private parent: ICommandEnumerator = NullCommandEnumerator.Create();
+  private _parent: ICommandEnumerator = NullCommandEnumerator.create();
 
-  get IsCompleted(): boolean {
+  get isCompleted(): boolean {
     return true;
   }
 
-  get Parent(): ICommandEnumerator | null {
-    return this.parent;
+  get parent(): ICommandEnumerator | null {
+    return this._parent;
   }
-  set Parent(_value: ICommandEnumerator | null) {}
+  set parent(_value: ICommandEnumerator | null) {}
 
-  Start(): void {}
-  Stop(): void {}
-  Destroy(): void {}
+  start(): void {}
+  stop(): void {}
+  destroy(): void {}
 
-  static Create(): ICommand {
+  static create(): ICommand {
     return new NullCommand();
   }
 }

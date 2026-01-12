@@ -2,47 +2,47 @@ import type { IState } from './IState';
 import type { IStateMachine } from './IStateMachine';
 
 export abstract class AbstractState implements IState {
-  protected stateName: string = '';
-  protected stateMachine: IStateMachine | null = null;
+  protected _stateName: string = '';
+  protected _stateMachine: IStateMachine | null = null;
   protected transitionNamesToStateNames: Map<string, string> = new Map();
 
-  get StateName(): string {
-    return this.stateName;
+  get stateName(): string {
+    return this._stateName;
   }
 
-  get StateMachine(): IStateMachine | null {
-    return this.stateMachine;
+  get stateMachine(): IStateMachine | null {
+    return this._stateMachine;
   }
-  set StateMachine(value: IStateMachine | null) {
-    this.stateMachine = value;
+  set stateMachine(value: IStateMachine | null) {
+    this._stateMachine = value;
   }
 
-  AddTransition(transitionName: string, toStateOrName: IState | string): void {
+  addTransition(transitionName: string, toStateOrName: IState | string): void {
     if (typeof toStateOrName === 'string') {
       if (!transitionName || !toStateOrName) return;
       this.transitionNamesToStateNames.set(transitionName, toStateOrName);
     } else {
       if (toStateOrName === null) return;
-      this.AddTransition(transitionName, toStateOrName.StateName);
+      this.addTransition(transitionName, toStateOrName.stateName);
     }
   }
 
-  RemoveTransition(transitionName: string): void {
+  removeTransition(transitionName: string): void {
     if (!transitionName) return;
     this.transitionNamesToStateNames.delete(transitionName);
   }
 
-  HandleTransition(transitionName: string): void {
+  handleTransition(transitionName: string): void {
     if (!transitionName?.trim()) return;
-    if (this.stateMachine === null) return;
+    if (this._stateMachine === null) return;
 
     const toStateName = this.transitionNamesToStateNames.get(transitionName);
     if (toStateName !== undefined) {
-      this.stateMachine.SetState(toStateName);
+      this._stateMachine.setState(toStateName);
     }
   }
 
-  EnterState(): void {}
-  ExitState(): void {}
-  Destroy(): void {}
+  enterState(): void {}
+  exitState(): void {}
+  destroy(): void {}
 }

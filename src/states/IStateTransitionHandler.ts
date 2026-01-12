@@ -1,3 +1,3 @@
 export interface IStateTransitionHandler {
-  HandleTransition(transitionName: string): void;
+  handleTransition(transitionName: string): void;
 }

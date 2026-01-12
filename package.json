@@ -1,6 +1,6 @@
 {
   "name": "@dpid/command-state-machine",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Command-driven state machine for TypeScript",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -4,17 +4,17 @@ import type { IState } from './IState';
 export type StateChangeCallback = (stateName: string) => void;
 
 export interface IStateMachine extends IStateTransitionHandler {
-  readonly CurrentState: IState | null;
+  readonly currentState: IState | null;
 
-  OnStateChange(callback: StateChangeCallback): void;
-  OffStateChange(callback: StateChangeCallback): void;
+  onStateChange(callback: StateChangeCallback): void;
+  offStateChange(callback: StateChangeCallback): void;
 
-  GetState(stateName: string): IState | null;
-  SetState(stateName: string): void;
-  SetState(state: IState): void;
+  getState(stateName: string): IState | null;
+  setState(stateName: string): void;
+  setState(state: IState): void;
 
-  AddState(state: IState): void;
-  RemoveState(state: IState): void;
+  addState(state: IState): void;
+  removeState(state: IState): void;
 
-  Destroy(): void;
+  destroy(): void;
 }

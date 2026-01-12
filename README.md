@@ -14,28 +14,28 @@ npm install @dpid/command-state-machine
 import { StateMachine, SimpleState, CommandableState, WaitForTime, AbstractCommand } from '@dpid/command-state-machine';
 
 // Create a state machine
-const sm = StateMachine.Create();
+const sm = StateMachine.create();
 
 // Add states
-const idle = SimpleState.Create('idle');
-const running = SimpleState.Create('running');
+const idle = SimpleState.create('idle');
+const running = SimpleState.create('running');
 
 // Define transitions
-idle.AddTransition('start', running);
-running.AddTransition('stop', idle);
+idle.addTransition('start', running);
+running.addTransition('stop', idle);
 
-sm.AddState(idle);
-sm.AddState(running);
+sm.addState(idle);
+sm.addState(running);
 
 // Listen for state changes
-sm.OnStateChange((stateName) => {
+sm.onStateChange((stateName) => {
   console.log(`State: ${stateName}`);
 });
 
 // Set initial state and trigger transitions
-sm.SetState('idle');
-sm.HandleTransition('start'); // -> running
-sm.HandleTransition('stop');  // -> idle
+sm.setState('idle');
+sm.handleTransition('start'); // -> running
+sm.handleTransition('stop');  // -> idle
 ```
 
 ## Creating Custom Commands
@@ -55,7 +55,7 @@ class LogCommand extends AbstractCommand {
     this.complete(); // Signal completion
   }
 
-  static Create(message: string): ICommand {
+  static create(message: string): ICommand {
     return new LogCommand(message);
   }
 }
@@ -87,19 +87,19 @@ States that execute commands when entered:
 ```typescript
 import { StateMachine, CommandableState, WaitForTime } from '@dpid/command-state-machine';
 
-const sm = StateMachine.Create();
+const sm = StateMachine.create();
 
-const loadingState = CommandableState.Create('loading');
-loadingState.AddCommand(LogCommand.Create('Loading started...'));
-loadingState.AddCommand(WaitForTime.Create(1000));
-loadingState.AddCommand(LogCommand.Create('Loading complete!'));
+const loadingState = CommandableState.create('loading');
+loadingState.addCommand(LogCommand.create('Loading started...'));
+loadingState.addCommand(WaitForTime.create(1000));
+loadingState.addCommand(LogCommand.create('Loading complete!'));
 
-loadingState.AddTransition('done', 'idle');
+loadingState.addTransition('done', 'idle');
 
-sm.AddState(loadingState);
-sm.AddState(SimpleState.Create('idle'));
+sm.addState(loadingState);
+sm.addState(SimpleState.create('idle'));
 
-sm.SetState('loading');
+sm.setState('loading');
 // Output:
 // Loading started...
 // (1 second delay)
@@ -111,19 +111,19 @@ sm.SetState('loading');
 Run multiple command sequences simultaneously using layers:
 
 ```typescript
-const state = CommandableState.Create('parallel-demo');
+const state = CommandableState.create('parallel-demo');
 
 // Layer 0: Animation sequence
-state.AddCommandToLayer(LogCommand.Create('Animation: frame 1'), 0);
-state.AddCommandToLayer(WaitForTime.Create(100), 0);
-state.AddCommandToLayer(LogCommand.Create('Animation: frame 2'), 0);
+state.addCommandToLayer(LogCommand.create('Animation: frame 1'), 0);
+state.addCommandToLayer(WaitForTime.create(100), 0);
+state.addCommandToLayer(LogCommand.create('Animation: frame 2'), 0);
 
 // Layer 1: Audio sequence (runs in parallel)
-state.AddCommandToLayer(LogCommand.Create('Audio: playing'), 1);
-state.AddCommandToLayer(WaitForTime.Create(200), 1);
-state.AddCommandToLayer(LogCommand.Create('Audio: done'), 1);
+state.addCommandToLayer(LogCommand.create('Audio: playing'), 1);
+state.addCommandToLayer(WaitForTime.create(200), 1);
+state.addCommandToLayer(LogCommand.create('Audio: done'), 1);
 
-state.EnterState();
+state.enterState();
 // Both layers execute simultaneously
 ```
 
@@ -136,23 +136,23 @@ import { SerialCommandEnumerator, ParallelCommandEnumerator } from '@dpid/comman
 
 // Serial: commands run one after another
 const serial = new SerialCommandEnumerator();
-serial.AddCommand(LogCommand.Create('First'));
-serial.AddCommand(LogCommand.Create('Second'));
-serial.AddCommand(LogCommand.Create('Third'));
+serial.addCommand(LogCommand.create('First'));
+serial.addCommand(LogCommand.create('Second'));
+serial.addCommand(LogCommand.create('Third'));
 
 // Parallel: all commands start at once
 const parallel = new ParallelCommandEnumerator();
-parallel.AddCommand(taskA);
-parallel.AddCommand(taskB);
-parallel.AddCommand(taskC);
+parallel.addCommand(taskA);
+parallel.addCommand(taskB);
+parallel.addCommand(taskC);
 
 // Nest them for complex flows
 const workflow = new SerialCommandEnumerator();
-workflow.AddCommand(LogCommand.Create('Starting parallel tasks...'));
-workflow.AddCommand(parallel);
-workflow.AddCommand(LogCommand.Create('All parallel tasks complete!'));
+workflow.addCommand(LogCommand.create('Starting parallel tasks...'));
+workflow.addCommand(parallel);
+workflow.addCommand(LogCommand.create('All parallel tasks complete!'));
 
-workflow.Start();
+workflow.start();
 ```
 
 ## Looping
@@ -160,15 +160,15 @@ workflow.Start();
 Commands and enumerators support looping:
 
 ```typescript
-const state = CommandableState.Create('looping');
-state.AddCommand(LogCommand.Create('Tick'));
-state.AddCommand(WaitForTime.Create(1000));
+const state = CommandableState.create('looping');
+state.addCommand(LogCommand.create('Tick'));
+state.addCommand(WaitForTime.create(1000));
 
 // Loop layer 0 three times
-state.SetLayerLoopCount(0, 3);
+state.setLayerLoopCount(0, 3);
 
 // Use -1 for infinite looping
-state.SetLayerLoopCount(0, -1);
+state.setLayerLoopCount(0, -1);
 ```
 
 ## Automatic State Transitions
@@ -178,23 +178,23 @@ Use `CallTransition` to trigger state transitions from within a command sequence
 ```typescript
 import { StateMachine, CommandableState, CallTransition } from '@dpid/command-state-machine';
 
-const sm = StateMachine.Create();
+const sm = StateMachine.create();
 
-const intro = CommandableState.Create('intro');
-const gameplay = CommandableState.Create('gameplay');
+const intro = CommandableState.create('intro');
+const gameplay = CommandableState.create('gameplay');
 
-intro.AddTransition('start', gameplay);
+intro.addTransition('start', gameplay);
 
 // Commands execute, then automatically transition to gameplay
-intro.AddCommand(LogCommand.Create('Welcome to the game!'));
-intro.AddCommand(WaitForTime.Create(2000));
-intro.AddCommand(LogCommand.Create('Starting...'));
-intro.AddCommand(CallTransition.Create(intro, 'start'));
+intro.addCommand(LogCommand.create('Welcome to the game!'));
+intro.addCommand(WaitForTime.create(2000));
+intro.addCommand(LogCommand.create('Starting...'));
+intro.addCommand(CallTransition.create(intro, 'start'));
 
-sm.AddState(intro);
-sm.AddState(gameplay);
+sm.addState(intro);
+sm.addState(gameplay);
 
-sm.SetState('intro');
+sm.setState('intro');
 // After commands complete, automatically transitions to 'gameplay'
 ```
 

@@ -2,9 +2,9 @@ import type { IState } from './IState';
 import { AbstractState } from './AbstractState';
 
 export class SimpleState extends AbstractState {
-  static Create(name: string): IState {
+  static create(name: string): IState {
     const state = new SimpleState();
-    state.stateName = name;
+    state._stateName = name;
     return state;
   }
 }
