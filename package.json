@@ -13,7 +13,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -24,9 +26,14 @@
     "tsup": "^8.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "^4.0.17"
   },
-  "keywords": ["state-machine", "commands", "fsm", "game-development"],
+  "keywords": [
+    "state-machine",
+    "commands",
+    "fsm",
+    "game-development"
+  ],
   "license": "MIT",
   "author": "dpid",
   "repository": {
