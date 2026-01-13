@@ -477,4 +477,122 @@ describe('AsyncCommand', () => {
       consoleErrorSpy.mockRestore();
     });
   });
+
+  describe('Cancellation Support', () => {
+    class CancellableCommand extends AsyncCommand {
+      public capturedSignal?: AbortSignal;
+
+      constructor(private promiseFactory: (signal?: AbortSignal) => Promise<void>) {
+        super();
+      }
+
+      protected override async onExecuteAsync(signal?: AbortSignal): Promise<void> {
+        this.capturedSignal = signal;
+        return this.promiseFactory(signal);
+      }
+
+      static create(promiseFactory: (signal?: AbortSignal) => Promise<void>): CancellableCommand {
+        return new CancellableCommand(promiseFactory);
+      }
+    }
+
+    it('should provide AbortSignal to onExecuteAsync', () => {
+      const cmd = CancellableCommand.create(() => delay(50));
+
+      cmd.start();
+
+      expect(cmd.capturedSignal).toBeDefined();
+      expect(cmd.capturedSignal).toBeInstanceOf(AbortSignal);
+    });
+
+    it('should provide non-aborted signal initially', () => {
+      const cmd = CancellableCommand.create(() => delay(50));
+
+      cmd.start();
+
+      expect(cmd.capturedSignal?.aborted).toBe(false);
+    });
+
+    it('should abort signal when command is stopped', async () => {
+      const cmd = CancellableCommand.create(() => delay(50));
+
+      cmd.start();
+      const signal = cmd.capturedSignal;
+      expect(signal?.aborted).toBe(false);
+
+      cmd.stop();
+
+      expect(signal?.aborted).toBe(true);
+    });
+
+    it('should abort signal when command is destroyed', async () => {
+      const cmd = CancellableCommand.create(() => delay(50));
+
+      cmd.start();
+      const signal = cmd.capturedSignal;
+      expect(signal?.aborted).toBe(false);
+
+      cmd.destroy();
+
+      expect(signal?.aborted).toBe(true);
+    });
+
+    it('should provide fresh signal on restart', async () => {
+      const cmd = CancellableCommand.create(() => delay(10));
+
+      cmd.start();
+      const firstSignal = cmd.capturedSignal;
+      expect(firstSignal?.aborted).toBe(false);
+
+      await delay(20);
+      expect(cmd.isCompleted).toBe(true);
+
+      cmd.start();
+      const secondSignal = cmd.capturedSignal;
+
+      expect(secondSignal).toBeDefined();
+      expect(secondSignal).not.toBe(firstSignal);
+      expect(secondSignal?.aborted).toBe(false);
+    });
+
+    it('should work with subclass that does not accept signal parameter', async () => {
+      class LegacyCommand extends AsyncCommand {
+        protected override async onExecuteAsync(): Promise<void> {
+          await delay(10);
+        }
+
+        static create(): Command {
+          return new LegacyCommand();
+        }
+      }
+
+      const cmd = LegacyCommand.create();
+
+      cmd.start();
+      await delay(20);
+
+      expect(cmd.isCompleted).toBe(true);
+    });
+
+    it('should abort signal before promise settles', () => {
+      let signalWhenAborted: AbortSignal | undefined;
+      const cmd = CancellableCommand.create((signal) => {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            signalWhenAborted = signal;
+            resolve();
+          }, 50);
+        });
+      });
+
+      cmd.start();
+      const signal = cmd.capturedSignal;
+
+      cmd.stop();
+
+      // Signal should be aborted immediately, before the promise settles
+      expect(signal?.aborted).toBe(true);
+      expect(signalWhenAborted).toBeUndefined(); // Promise hasn't settled yet
+    });
+  });
 });
