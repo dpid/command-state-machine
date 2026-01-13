@@ -4,5 +4,6 @@ export type { StateTransitionHandler } from './state-transition-handler.interfac
 
 export { AbstractState } from './abstract-state';
 export { CommandableState } from './commandable-state';
+export { NullState } from './null-state';
 export { SimpleState } from './simple-state';
 export { StateMachine } from './state-machine.class';
