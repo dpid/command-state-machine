@@ -1,6 +1,6 @@
 # @dpid/command-state-machine
 
-A command-driven state machine for TypeScript. Execute sequences of commands when entering states, with support for serial, parallel, and layered command execution.
+A command-driven state machine for TypeScript. Features hierarchical states with transition inheritance, plus serial, parallel, and layered command execution.
 
 ## Installation
 
@@ -196,6 +196,113 @@ sm.addState(gameplay);
 
 sm.setState('intro');
 // After commands complete, automatically transitions to 'gameplay'
+```
+
+## Hierarchical State Machines
+
+States can contain substates, forming a tree structure. This enables transition inheritance, local transitions, and history support.
+
+### Creating a Hierarchy
+
+```typescript
+import { StateMachine, AbstractState, CommandableState } from '@dpid/command-state-machine';
+
+const sm = StateMachine.create();
+
+// Create parent and child states
+const playing = AbstractState.create('Playing');
+const combat = AbstractState.create('Combat');
+const attacking = AbstractState.create('Attacking');
+const defending = AbstractState.create('Defending');
+
+// Build the hierarchy
+playing.addSubstate(combat);
+combat.addSubstate(attacking);
+combat.addSubstate(defending);
+
+// Define transitions
+combat.addTransition('attack', attacking);
+combat.addTransition('defend', defending);
+attacking.addTransition('switchToDefend', defending);
+
+sm.addState(playing);
+
+// Enter nested state using dot notation
+sm.setState('Playing.Combat.Attacking');
+// Calls enterState() on: Playing → Combat → Attacking
+```
+
+### Transition Inheritance
+
+Transitions defined on a parent apply to all descendants:
+
+```typescript
+// Define once on parent
+playing.addTransition('pause', 'Paused');
+playing.addTransition('gameOver', 'GameOver');
+
+sm.addState(SimpleState.create('Paused'));
+sm.addState(SimpleState.create('GameOver'));
+
+sm.setState('Playing.Combat.Attacking');
+
+// Works from any substate - inherited from Playing
+sm.handleTransition('pause'); // → Paused
+```
+
+### Local Transitions
+
+Sibling-to-sibling transitions don't exit the parent state:
+
+```typescript
+const combat = CommandableState.create('Combat');
+combat.addCommand(PlayMusicCommand.create('battle.mp3')); // Starts on enter
+
+const attacking = AbstractState.create('Attacking');
+const defending = AbstractState.create('Defending');
+attacking.addTransition('block', defending);
+
+combat.addSubstate(attacking);
+combat.addSubstate(defending);
+
+sm.setState('Playing.Combat.Attacking');
+sm.handleTransition('block'); // → Defending
+// Combat music keeps playing - Combat was never exited
+```
+
+### History States
+
+States remember their last active child. Use `enterWithHistory()` to resume:
+
+```typescript
+sm.setState('Playing.Combat.Attacking');
+sm.setState('Paused'); // Exit hierarchy
+
+// Later, resume where we left off
+const playing = sm.getState('Playing');
+playing.enterWithHistory();
+// Re-enters: Playing → Combat → Attacking
+```
+
+### Hierarchy API
+
+```typescript
+// Add/remove substates
+parentState.addSubstate(childState);
+parentState.removeSubstate(childState);
+
+// Access hierarchy
+state.parent;              // Parent state or null
+state.children;            // Array of child states
+state.getStatePath();      // 'Playing.Combat.Attacking'
+state.lastActiveChild;     // Last entered child or null
+
+// Enter states
+state.enterPath('Combat.Attacking');  // Enter nested path
+state.enterWithHistory();              // Resume last active path
+
+// Transitions within hierarchy
+state.transitionTo(otherState);  // Finds common ancestor, exits/enters efficiently
 ```
 
 ## API Reference
