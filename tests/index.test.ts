@@ -83,16 +83,16 @@ describe('WaitForTime', () => {
     const serial = new SerialCommandEnumerator();
 
     serial.addCommand(LogCommand.create('Before', logs));
-    serial.addCommand(WaitForTime.create(100));
+    serial.addCommand(WaitForTime.create(0.1));
     serial.addCommand(LogCommand.create('After', logs));
 
     serial.start();
     expect(logs).toEqual(['Before']);
 
-    serial.update(50);
+    serial.update(0.05);
     expect(logs).toEqual(['Before']);
 
-    serial.update(50);
+    serial.update(0.05);
     expect(logs).toEqual(['Before', 'After']);
 
     serial.destroy();
@@ -100,12 +100,12 @@ describe('WaitForTime', () => {
 
   it('should handle large delta time overshoots', () => {
     const serial = new SerialCommandEnumerator();
-    serial.addCommand(WaitForTime.create(100));
+    serial.addCommand(WaitForTime.create(0.1));
 
     serial.start();
     expect(serial.isCompleted).toBe(false);
 
-    serial.update(200);
+    serial.update(0.2);
     expect(serial.isCompleted).toBe(true);
 
     serial.destroy();
@@ -216,10 +216,10 @@ describe('Game Loop Integration', () => {
     state.addCommand(command);
 
     sm.setState('TestState');
-    sm.update(16);
-    sm.update(16);
+    sm.update(0.016);
+    sm.update(0.016);
 
-    expect(command.updateCalls).toEqual([16, 16]);
+    expect(command.updateCalls).toEqual([0.016, 0.016]);
 
     sm.destroy();
   });
@@ -242,7 +242,7 @@ describe('Game Loop Integration', () => {
     serial.addCommand(command);
 
     serial.start();
-    serial.update(16);
+    serial.update(0.016);
 
     expect(command.updateCalls).toEqual([]);
 
@@ -258,9 +258,9 @@ describe('Game Loop Integration', () => {
     serial.addCommand(command2);
 
     serial.start();
-    serial.update(16);
+    serial.update(0.016);
 
-    expect(command1.updateCalls).toEqual([16]);
+    expect(command1.updateCalls).toEqual([0.016]);
     expect(command2.updateCalls).toEqual([]);
 
     serial.destroy();
@@ -275,10 +275,10 @@ describe('Game Loop Integration', () => {
     parallel.addCommand(command2);
 
     parallel.start();
-    parallel.update(16);
+    parallel.update(0.016);
 
-    expect(command1.updateCalls).toEqual([16]);
-    expect(command2.updateCalls).toEqual([16]);
+    expect(command1.updateCalls).toEqual([0.016]);
+    expect(command2.updateCalls).toEqual([0.016]);
 
     parallel.destroy();
   });

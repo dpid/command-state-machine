@@ -16,6 +16,9 @@ export interface StateMachine extends StateTransitionHandler {
   addState(state: State): void;
   removeState(state: State): void;
 
+  /**
+   * @param dt Delta time in seconds
+   */
   update(dt: number): void;
   destroy(): void;
 }

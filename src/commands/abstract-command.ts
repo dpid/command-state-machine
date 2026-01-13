@@ -45,5 +45,8 @@ export abstract class AbstractCommand implements Command {
   protected onStart(): void {}
   protected onStop(): void {}
   protected onDestroy(): void {}
+  /**
+   * @param _dt Delta time in seconds
+   */
   protected onUpdate(_dt: number): void {}
 }
