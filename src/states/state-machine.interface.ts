@@ -16,5 +16,6 @@ export interface StateMachine extends StateTransitionHandler {
   addState(state: State): void;
   removeState(state: State): void;
 
+  update(dt: number): void;
   destroy(): void;
 }

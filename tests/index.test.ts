@@ -78,27 +78,37 @@ describe('CommandableState', () => {
 });
 
 describe('WaitForTime', () => {
-  it('should wait for specified duration', async () => {
+  it('should complete after accumulated delta time', () => {
     const logs: string[] = [];
-    const state = CommandableState.create('TimedState');
+    const serial = new SerialCommandEnumerator();
 
-    state.addCommand(LogCommand.create('Before wait', logs));
-    state.addCommand(WaitForTime.create(100));
-    state.addCommand(LogCommand.create('After wait', logs));
+    serial.addCommand(LogCommand.create('Before', logs));
+    serial.addCommand(WaitForTime.create(100));
+    serial.addCommand(LogCommand.create('After', logs));
 
-    const start = Date.now();
-    state.enterState();
+    serial.start();
+    expect(logs).toEqual(['Before']);
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    expect(logs).toEqual(['Before wait']);
+    serial.update(50);
+    expect(logs).toEqual(['Before']);
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    const elapsed = Date.now() - start;
+    serial.update(50);
+    expect(logs).toEqual(['Before', 'After']);
 
-    expect(logs).toEqual(['Before wait', 'After wait']);
-    expect(elapsed).toBeGreaterThanOrEqual(100);
+    serial.destroy();
+  });
 
-    state.destroy();
+  it('should handle large delta time overshoots', () => {
+    const serial = new SerialCommandEnumerator();
+    serial.addCommand(WaitForTime.create(100));
+
+    serial.start();
+    expect(serial.isCompleted).toBe(false);
+
+    serial.update(200);
+    expect(serial.isCompleted).toBe(true);
+
+    serial.destroy();
   });
 });
 
@@ -185,5 +195,91 @@ describe('CallTransition', () => {
     expect(sm.currentState?.stateName).toBe('StateC');
 
     sm.destroy();
+  });
+});
+
+describe('Game Loop Integration', () => {
+  class TrackingCommand extends AbstractCommand {
+    public updateCalls: number[] = [];
+
+    protected override onUpdate(dt: number): void {
+      this.updateCalls.push(dt);
+    }
+  }
+
+  it('should propagate update through command hierarchy', () => {
+    const command = new TrackingCommand();
+    const state = CommandableState.create('TestState');
+    const sm = StateMachine.create();
+
+    sm.addState(state);
+    state.addCommand(command);
+
+    sm.setState('TestState');
+    sm.update(16);
+    sm.update(16);
+
+    expect(command.updateCalls).toEqual([16, 16]);
+
+    sm.destroy();
+  });
+
+  it('should not update completed commands', () => {
+    class ImmediateCompleteCommand extends AbstractCommand {
+      public updateCalls: number[] = [];
+
+      protected override onStart(): void {
+        this.complete();
+      }
+
+      protected override onUpdate(dt: number): void {
+        this.updateCalls.push(dt);
+      }
+    }
+
+    const command = new ImmediateCompleteCommand();
+    const serial = new SerialCommandEnumerator();
+    serial.addCommand(command);
+
+    serial.start();
+    serial.update(16);
+
+    expect(command.updateCalls).toEqual([]);
+
+    serial.destroy();
+  });
+
+  it('should only update current command in serial enumerator', () => {
+    const command1 = new TrackingCommand();
+    const command2 = new TrackingCommand();
+
+    const serial = new SerialCommandEnumerator();
+    serial.addCommand(command1);
+    serial.addCommand(command2);
+
+    serial.start();
+    serial.update(16);
+
+    expect(command1.updateCalls).toEqual([16]);
+    expect(command2.updateCalls).toEqual([]);
+
+    serial.destroy();
+  });
+
+  it('should update all active commands in parallel enumerator', () => {
+    const command1 = new TrackingCommand();
+    const command2 = new TrackingCommand();
+
+    const parallel = new ParallelCommandEnumerator();
+    parallel.addCommand(command1);
+    parallel.addCommand(command2);
+
+    parallel.start();
+    parallel.update(16);
+
+    expect(command1.updateCalls).toEqual([16]);
+    expect(command2.updateCalls).toEqual([16]);
+
+    parallel.destroy();
   });
 });

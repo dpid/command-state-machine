@@ -31,6 +31,12 @@ export abstract class AbstractCommand implements Command {
     this.onDestroy();
   }
 
+  update(dt: number): void {
+    if (!this.completed) {
+      this.onUpdate(dt);
+    }
+  }
+
   protected complete(): void {
     this.completed = true;
     this.parentEnumerator.handleCompletedCommand(this);
@@ -39,4 +45,5 @@ export abstract class AbstractCommand implements Command {
   protected onStart(): void {}
   protected onStop(): void {}
   protected onDestroy(): void {}
+  protected onUpdate(_dt: number): void {}
 }

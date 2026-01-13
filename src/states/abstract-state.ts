@@ -44,5 +44,6 @@ export abstract class AbstractState implements State {
 
   enterState(): void {}
   exitState(): void {}
+  update(_dt: number): void {}
   destroy(): void {}
 }

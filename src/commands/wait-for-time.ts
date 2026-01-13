@@ -2,27 +2,21 @@ import type { Command } from './command.interface';
 import { AbstractCommand } from './abstract-command';
 
 export class WaitForTime extends AbstractCommand {
-  private timeoutId: ReturnType<typeof setTimeout> | null = null;
+  private elapsed: number = 0;
 
   constructor(private readonly milliseconds: number) {
     super();
   }
 
   protected override onStart(): void {
-    this.timeoutId = setTimeout(() => {
+    this.elapsed = 0;
+  }
+
+  protected override onUpdate(dt: number): void {
+    this.elapsed += dt;
+    if (this.elapsed >= this.milliseconds) {
       this.complete();
-    }, this.milliseconds);
-  }
-
-  protected override onStop(): void {
-    if (this.timeoutId !== null) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
     }
-  }
-
-  protected override onDestroy(): void {
-    this.onStop();
   }
 
   static create(milliseconds: number): Command {

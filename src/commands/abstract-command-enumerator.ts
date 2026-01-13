@@ -45,4 +45,12 @@ export class AbstractCommandEnumerator extends AbstractCommand implements Comman
   protected getIsCommandCompleted(command: Command): boolean {
     return command.isCompleted;
   }
+
+  protected override onUpdate(dt: number): void {
+    this.commands.forEach((command) => {
+      if (!command.isCompleted) {
+        command.update(dt);
+      }
+    });
+  }
 }

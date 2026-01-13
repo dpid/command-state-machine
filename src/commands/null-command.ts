@@ -17,6 +17,7 @@ export class NullCommand implements Command {
   start(): void {}
   stop(): void {}
   destroy(): void {}
+  update(_dt: number): void {}
 
   static create(): Command {
     return new NullCommand();

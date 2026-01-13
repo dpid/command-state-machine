@@ -57,6 +57,10 @@ export class CommandableState extends AbstractState implements CommandLayerColle
     this.player.stop();
   }
 
+  override update(dt: number): void {
+    this.player.update(dt);
+  }
+
   override destroy(): void {
     this.player.destroy();
   }

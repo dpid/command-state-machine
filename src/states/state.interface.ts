@@ -13,5 +13,6 @@ export interface State extends StateTransitionHandler {
   enterState(): void;
   exitState(): void;
 
+  update(dt: number): void;
   destroy(): void;
 }

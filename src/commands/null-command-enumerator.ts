@@ -16,6 +16,7 @@ export class NullCommandEnumerator implements CommandEnumerator {
   start(): void {}
   stop(): void {}
   destroy(): void {}
+  update(_dt: number): void {}
 
   get loopCount(): number {
     return 0;

@@ -7,4 +7,5 @@ export interface Command {
   start(): void;
   stop(): void;
   destroy(): void;
+  update(dt: number): void;
 }

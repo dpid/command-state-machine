@@ -159,6 +159,10 @@ export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer 
     this.parallelEnumerator.destroy();
     this.layers.length = 0;
   }
+
+  protected override onUpdate(dt: number): void {
+    this.parallelEnumerator.update(dt);
+  }
 }
 
 export { CommandPlayerImpl as CommandPlayer };

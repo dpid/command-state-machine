@@ -64,6 +64,12 @@ export class StateMachineImpl implements StateMachine {
     }
   }
 
+  update(dt: number): void {
+    if (this.activeState !== null) {
+      this.activeState.update(dt);
+    }
+  }
+
   destroy(): void {
     this.stateDictionary.forEach((state) => state.destroy());
     this.stateDictionary.clear();

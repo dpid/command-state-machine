@@ -58,4 +58,10 @@ export class SerialCommandEnumerator extends AbstractCommandEnumerator {
       this.complete();
     }
   }
+
+  protected override onUpdate(dt: number): void {
+    if (!this.currentCommand.isCompleted) {
+      this.currentCommand.update(dt);
+    }
+  }
 }
