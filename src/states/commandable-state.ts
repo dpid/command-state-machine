@@ -63,6 +63,7 @@ export class CommandableState extends AbstractState implements CommandLayerColle
 
   override destroy(): void {
     this.player.destroy();
+    super.destroy();
   }
 
   static create(name: string): CommandableState {

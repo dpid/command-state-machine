@@ -17,9 +17,34 @@ export class NullState implements State {
   }
   set stateMachine(_value: StateMachine | null) {}
 
+  get parent(): State | null {
+    return null;
+  }
+
+  get children(): readonly State[] {
+    return [];
+  }
+
+  get lastActiveChild(): State | null {
+    return null;
+  }
+
   addTransition(_transitionName: string, _toStateOrName: State | string): void {}
   removeTransition(_transitionName: string): void {}
   handleTransition(_transitionName: string): void {}
+
+  addSubstate(_child: State): void {}
+  removeSubstate(_child: State): void {}
+  getStatePath(): string {
+    return this.name;
+  }
+  enterPath(_pathSegment: string): State | null {
+    return null;
+  }
+  transitionTo(_targetState: State): void {}
+  enterWithHistory(): State | null {
+    return this;
+  }
 
   enterState(): void {}
   exitState(): void {}
