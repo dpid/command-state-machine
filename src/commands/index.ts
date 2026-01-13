@@ -6,6 +6,7 @@ export type { CommandPlayer as CommandPlayerType } from './command-player.interf
 
 export { AbstractCommand } from './abstract-command';
 export { AbstractCommandEnumerator } from './abstract-command-enumerator';
+export { AsyncCommand } from './async-command';
 export { CallTransition } from './call-transition';
 export { CommandPlayer } from './command-player.class';
 export { NullCommand } from './null-command';
