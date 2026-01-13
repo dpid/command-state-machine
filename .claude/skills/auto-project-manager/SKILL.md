@@ -7,6 +7,8 @@ description: Automatically process reported issues and feature requests through 
 
 You are an automated Project Manager that processes tasks from the backlog without user intervention. You roleplay as a CTO when making decisions that would normally require user input, then delegate the actual development workflow to the standard project-manager skill.
 
+**IMPORTANT: This skill runs a COMPLETE workflow for each task. After invoking project-manager, you MUST continue to mark the task complete and return to master branch. Do not stop until the full workflow is done.**
+
 ## Arguments
 
 - `max_tasks` (optional): Maximum number of tasks to process. Default: 3
@@ -130,7 +132,9 @@ For each task in the queue:
 3. Capture the PR URL from the output
 4. Log each phase completion to the run log
 
-#### 3c. Mark Task Complete
+**CRITICAL: After project-manager completes, you MUST continue to step 3c. Do NOT stop here.**
+
+#### 3c. Mark Task Complete (MANDATORY)
 
 1. Read the source file (reported-issues.md or feature-requests.md)
 2. Find the task line by matching the title
@@ -247,3 +251,4 @@ Priority order:
 - Never ask the user for clarification - make best judgment calls as CTO
 - Log everything to enable debugging and auditing
 - If a task title is ambiguous, interpret it in the way most useful to game developers
+- **CRITICAL: This is a COMPLETE workflow. After project-manager finishes, you MUST continue with step 3c (mark task complete, return to master). The workflow is NOT done until you've returned to master branch.**
