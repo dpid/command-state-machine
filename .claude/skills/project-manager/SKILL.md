@@ -14,6 +14,26 @@ You are the Project Manager orchestrating a multi-agent development workflow. Yo
 3. Manage implementation and code review cycles
 4. Oversee feature review and release
 
+## Feature Directory Setup
+
+Each feature gets its own subdirectory to prevent stale file conflicts:
+
+1. After understanding the feature, derive a directory name using kebab-case:
+   - "Add NullState class" → `add-null-state`
+   - "Fix state transition bug" → `fix-state-transition-bug`
+
+2. Create the feature directory: `.claude/agent-notes/<feature-name>/`
+
+3. All files for this feature go in that directory:
+   - `<feature-dir>/feature-spec.md`
+   - `<feature-dir>/implementation-plan.md`
+   - `<feature-dir>/implementation-plan-review.md`
+   - `<feature-dir>/code-review.md`
+   - `<feature-dir>/feature-review.md`
+   - `<feature-dir>/chat-log.md`
+
+4. When spawning agents, always include the feature directory path in your prompt.
+
 ## Workflow Phases
 
 ### Phase 1: Feature Interview
@@ -22,8 +42,9 @@ Start by understanding what the user wants to build.
 
 1. Ask clarifying questions until the feature scope is clear
 2. Confirm your understanding with the user
-3. Write the feature specification to `.claude/agent-notes/feature-spec.md`
-4. Initialize the chat log at `.claude/agent-notes/chat-log.md`
+3. Derive the feature directory name (kebab-case) and create it
+4. Write the feature specification to `<feature-dir>/feature-spec.md`
+5. Initialize the chat log at `<feature-dir>/chat-log.md`
 
 **Feature spec format:**
 ```markdown
@@ -51,11 +72,11 @@ Coordinate the Architect and Plan Reviewer in a design loop.
 **Loop (max 3 iterations):**
 
 1. Spawn the `architect` agent:
-   - Provide: feature-spec.md path, any existing feedback files
+   - Provide: feature directory path, feature-spec.md location, any existing feedback files
    - Wait for implementation-plan.md to be written
 
 2. Spawn the `plan-reviewer` agent:
-   - Provide: implementation-plan.md and feature-spec.md paths
+   - Provide: feature directory path, implementation-plan.md and feature-spec.md locations
    - Wait for implementation-plan-review.md to be written
 
 3. Check the review:
@@ -69,16 +90,16 @@ Coordinate the Architect and Plan Reviewer in a design loop.
 
 Create feature branch and coordinate Developer and Code Reviewer.
 
-1. Create feature branch: `git checkout -b feature/<short-description>`
+1. Create feature branch: `git checkout -b feature/<feature-name>`
 
 **Loop (max 3 iterations):**
 
 2. Spawn the `senior-developer` agent:
-   - Provide: implementation-plan.md path, any code-review.md
+   - Provide: feature directory path, implementation-plan.md location, any code-review.md
    - Wait for implementation to complete
 
 3. Spawn the `code-reviewer` agent:
-   - Provide: implementation-plan.md path, list of changed files
+   - Provide: feature directory path, implementation-plan.md location, list of changed files
    - Wait for code-review.md to be written
 
 4. Check the review:
@@ -93,7 +114,7 @@ Create feature branch and coordinate Developer and Code Reviewer.
 Get external perspective on the completed feature.
 
 1. Spawn the `feature-reviewer` agent:
-   - Provide: feature-spec.md path
+   - Provide: feature directory path, feature-spec.md location
    - Wait for feature-review.md to be written
 
 2. Check the review:
@@ -107,7 +128,7 @@ Get external perspective on the completed feature.
 Commit, push, and create PR.
 
 1. Spawn the `release-engineer` agent:
-   - Provide: feature-spec.md for commit message context
+   - Provide: feature directory path, feature-spec.md for commit message context
    - Wait for PR to be created
 
 2. Update chat log with release summary
@@ -116,7 +137,7 @@ Commit, push, and create PR.
 
 ## Chat Log Format
 
-Maintain `.claude/agent-notes/chat-log.md` throughout the process:
+Maintain `<feature-dir>/chat-log.md` throughout the process:
 
 ```markdown
 # Feature Development Chat Log
@@ -156,18 +177,19 @@ If any phase gets stuck (agents producing poor output, circular disagreements af
 
 ## Agent Spawning
 
-Use the Task tool to spawn sub-agents:
+When spawning agents, always include the feature directory in your prompt:
 
 ```
-Task tool with:
-- subagent_type: [agent name from .claude/agents/]
-- prompt: [specific instructions including file paths]
-- model: "sonnet" (or "opus" for Architect final iteration)
+Feature directory: .claude/agent-notes/<feature-name>/
+
+Read the feature spec at: <feature-dir>/feature-spec.md
+Write your output to: <feature-dir>/implementation-plan.md
 ```
 
 ## Important Notes
 
 - Always read `.claude/context/` files before starting to understand this project
-- Create `.claude/agent-notes/` directory if it doesn't exist
+- Create the feature subdirectory at the start of Phase 1
+- Always pass the feature directory path when spawning agents
 - Each agent interaction should be logged to the chat log
 - Keep the user informed of progress between phases

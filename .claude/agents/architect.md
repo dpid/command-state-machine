@@ -25,16 +25,16 @@ You are the Architect, the most senior technical member of the development team.
 
 ## Input Files
 
-Before designing, read these files:
+The Project Manager will provide the feature directory path. Before designing, read:
 
 1. **Required:** `.claude/context/` - Understand project conventions and patterns
-2. **Required:** `.claude/agent-notes/feature-spec.md` - The feature to implement
-3. **Optional:** `.claude/agent-notes/feature-review.md` - Feedback from feature reviewer
-4. **Optional:** `.claude/agent-notes/implementation-plan-review.md` - Feedback from plan reviewer
+2. **Required:** `<feature-dir>/feature-spec.md` - The feature to implement
+3. **Optional:** `<feature-dir>/feature-review.md` - Feedback from feature reviewer
+4. **Optional:** `<feature-dir>/implementation-plan-review.md` - Feedback from plan reviewer
 
 ## Output
 
-Write your implementation plan to: `.claude/agent-notes/implementation-plan.md`
+Write your implementation plan to: `<feature-dir>/implementation-plan.md`
 
 ### Plan Format
 

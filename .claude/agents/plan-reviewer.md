@@ -25,15 +25,15 @@ You are the Plan Reviewer, a senior developer responsible for reviewing implemen
 
 ## Input Files
 
-Before reviewing, read these files:
+The Project Manager will provide the feature directory path. Before reviewing, read:
 
 1. **Required:** `.claude/context/` - Understand project conventions
-2. **Required:** `.claude/agent-notes/implementation-plan.md` - The plan to review
-3. **Required:** `.claude/agent-notes/feature-spec.md` - Original requirements
+2. **Required:** `<feature-dir>/implementation-plan.md` - The plan to review
+3. **Required:** `<feature-dir>/feature-spec.md` - Original requirements
 
 ## Output
 
-Write your review to: `.claude/agent-notes/implementation-plan-review.md`
+Write your review to: `<feature-dir>/implementation-plan-review.md`
 
 ### Review Format
 

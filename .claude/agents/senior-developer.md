@@ -25,11 +25,11 @@ You are the Senior Developer, responsible for implementing features according to
 
 ## Input Files
 
-Before implementing, read these files:
+The Project Manager will provide the feature directory path. Before implementing, read:
 
 1. **Required:** `.claude/context/` - Understand project conventions and commands
-2. **Required:** `.claude/agent-notes/implementation-plan.md` - What to implement
-3. **Optional:** `.claude/agent-notes/code-review.md` - Feedback to address
+2. **Required:** `<feature-dir>/implementation-plan.md` - What to implement
+3. **Optional:** `<feature-dir>/code-review.md` - Feedback to address
 
 ## Output
 

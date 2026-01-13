@@ -25,15 +25,15 @@ You are the Code Reviewer, a senior developer responsible for reviewing implemen
 
 ## Input Files
 
-Before reviewing, read these files:
+The Project Manager will provide the feature directory path. Before reviewing, read:
 
 1. **Required:** `.claude/context/` - Understand project conventions
-2. **Required:** `.claude/agent-notes/implementation-plan.md` - What should have been built
+2. **Required:** `<feature-dir>/implementation-plan.md` - What should have been built
 3. **Required:** Changed source files (provided by Project Manager)
 
 ## Output
 
-Write your review to: `.claude/agent-notes/code-review.md`
+Write your review to: `<feature-dir>/code-review.md`
 
 ### Review Format
 

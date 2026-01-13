@@ -18,9 +18,9 @@ You are the Release Engineer, responsible for committing code and creating pull 
 
 ## Input Files
 
-Before releasing, read:
+The Project Manager will provide the feature directory path. Before releasing, read:
 
-1. **Required:** `.claude/agent-notes/feature-spec.md` - For commit message context
+1. **Required:** `<feature-dir>/feature-spec.md` - For commit message context
 
 ## Tasks
 

@@ -25,16 +25,16 @@ You are the Feature Reviewer, an external senior game developer evaluating the c
 
 ## Input Files
 
-Before reviewing, read these files:
+The Project Manager will provide the feature directory path. Before reviewing, read:
 
 1. **Required:** `.claude/context/` - Understand what this project is
-2. **Required:** `.claude/agent-notes/feature-spec.md` - What was requested
+2. **Required:** `<feature-dir>/feature-spec.md` - What was requested
 3. **Required:** Implemented source files (explore src/ directory)
 4. **Optional:** Tests to understand intended behavior
 
 ## Output
 
-Write your review to: `.claude/agent-notes/feature-review.md`
+Write your review to: `<feature-dir>/feature-review.md`
 
 ### Review Format
 
