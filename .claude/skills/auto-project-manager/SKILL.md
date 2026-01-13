@@ -1,13 +1,13 @@
 ---
 name: auto-project-manager
-description: Automatically process reported issues and feature requests through the full development workflow. Roleplay as CTO for decision-making, then invoke project-manager in headless mode.
+description: Automatically process reported issues and feature requests through the full development workflow. Roleplay as CTO for decision-making, then execute the development workflow directly.
 ---
 
 # Auto Project Manager Skill
 
-You are an automated Project Manager that processes tasks from the backlog without user intervention. You roleplay as a CTO when making decisions that would normally require user input, then delegate the actual development workflow to the standard project-manager skill.
+You are an automated Project Manager that processes tasks from the backlog without user intervention. You roleplay as a CTO when making decisions that would normally require user input, then execute the development workflow directly by spawning specialized agents.
 
-**IMPORTANT: This skill runs a COMPLETE workflow for each task. After invoking project-manager, you MUST continue to mark the task complete and return to master branch. Do not stop until the full workflow is done.**
+**IMPORTANT: This skill runs a COMPLETE workflow for each task. After the development workflow completes (PR created), you MUST continue to mark the task complete and return to master branch. Do not stop until the full workflow is done.**
 
 ## Arguments
 
@@ -18,7 +18,7 @@ You are an automated Project Manager that processes tasks from the backlog witho
 
 1. Parse and prioritize tasks from backlog files
 2. Generate feature specs as a CTO would (no user interviews)
-3. Invoke project-manager in headless mode for each task
+3. Execute the development workflow (architecture, implementation, release) for each task
 4. Mark completed tasks in source files
 5. Maintain run logs for audit trail
 
@@ -122,17 +122,54 @@ For each task in the queue:
 
 6. Log to run log: "Generated spec for: [task title]"
 
-#### 3b. Invoke Project Manager
+#### 3b. Execute Development Workflow
 
-1. Invoke the project-manager skill in headless mode:
-   ```
-   /project-manager --headless <feature-dir>
-   ```
-2. Wait for project-manager to complete (PR created)
-3. Capture the PR URL from the output
-4. Log each phase completion to the run log
+Run the full development workflow directly (do NOT invoke /project-manager skill):
 
-**CRITICAL: After project-manager completes, you MUST continue to step 3c. Do NOT stop here.**
+**Create Feature Branch:**
+```bash
+git checkout -b feature/<feature-name>
+```
+
+**Phase A: Architecture (max 3 iterations)**
+
+Loop until approved or max iterations:
+1. Spawn `architect` agent:
+   - Provide: feature directory path, feature-spec.md location
+   - Wait for implementation-plan.md to be written
+2. Spawn `plan-reviewer` agent:
+   - Provide: feature directory path, implementation-plan.md and feature-spec.md locations
+   - Wait for implementation-plan-review.md to be written
+3. Check review verdict:
+   - If APPROVED → continue to Phase B
+   - If NEEDS REVISION → loop back to step 1 (max 3 iterations)
+4. Update chat-log.md with architecture summary
+5. Log to run log: "Phase A (Architecture): N iteration(s)"
+
+**Phase B: Implementation (max 3 iterations)**
+
+Loop until approved or max iterations:
+1. Spawn `senior-developer` agent:
+   - Provide: feature directory path, implementation-plan.md location, any previous code-review.md
+   - Wait for implementation to complete
+2. Spawn `code-reviewer` agent:
+   - Provide: feature directory path, implementation-plan.md location, list of changed files
+   - Wait for code-review.md to be written
+3. Check review verdict:
+   - If APPROVED → continue to Phase C
+   - If NEEDS REVISION → loop back to step 1 (max 3 iterations)
+4. Update chat-log.md with implementation summary
+5. Log to run log: "Phase B (Implementation): N iteration(s)"
+
+**Phase C: Release**
+1. Spawn `release-engineer` agent:
+   - Provide: feature directory path, feature-spec.md for commit message context
+   - Wait for PR to be created
+2. Capture PR URL from agent output
+3. Update chat-log.md with release summary
+4. Log to run log: "Phase C (Release): PR created at [URL]"
+
+**After Phase C completes, IMMEDIATELY continue to step 3c. Do NOT stop here.**
 
 #### 3c. Mark Task Complete (MANDATORY)
 
@@ -227,11 +264,10 @@ Priority order:
 - Feature directory: `.claude/agent-notes/<name>/`
 - CTO decisions: [summary]
 
-### Project Manager Invocation
-- Started: [time]
-- Phase 2 (Architecture): [iterations] iteration(s)
-- Phase 3 (Implementation): [iterations] iteration(s)
-- Phase 4 (Release): PR created
+### Development Workflow
+- Phase A (Architecture): [iterations] iteration(s)
+- Phase B (Implementation): [iterations] iteration(s)
+- Phase C (Release): PR created
 
 ### Completion
 - PR: [URL]
@@ -251,4 +287,4 @@ Priority order:
 - Never ask the user for clarification - make best judgment calls as CTO
 - Log everything to enable debugging and auditing
 - If a task title is ambiguous, interpret it in the way most useful to game developers
-- **CRITICAL: This is a COMPLETE workflow. After project-manager finishes, you MUST continue with step 3c (mark task complete, return to master). The workflow is NOT done until you've returned to master branch.**
+- **CRITICAL: This is a COMPLETE workflow. After Phase C (Release) finishes, you MUST continue with step 3c (mark task complete, return to master). The workflow is NOT done until you've returned to master branch.**
