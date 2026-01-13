@@ -4,7 +4,7 @@ import { AbstractCommand } from './abstract-command';
 export class WaitForTime extends AbstractCommand {
   private elapsed: number = 0;
 
-  constructor(private readonly milliseconds: number) {
+  constructor(private readonly seconds: number) {
     super();
   }
 
@@ -14,12 +14,12 @@ export class WaitForTime extends AbstractCommand {
 
   protected override onUpdate(dt: number): void {
     this.elapsed += dt;
-    if (this.elapsed >= this.milliseconds) {
+    if (this.elapsed >= this.seconds) {
       this.complete();
     }
   }
 
-  static create(milliseconds: number): Command {
-    return new WaitForTime(milliseconds);
+  static create(seconds: number): Command {
+    return new WaitForTime(seconds);
   }
 }

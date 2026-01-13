@@ -49,7 +49,7 @@ abstract class AbstractCommand {
 - Use descriptive test names that explain the scenario
 - Test both happy path and edge cases
 - Use `vi.fn()` for mocking callbacks
-- Delta time tests should use realistic values (16ms for 60fps frame)
+- Delta time tests should use realistic values (0.016s for 60fps frame)
 
 ## Comments
 

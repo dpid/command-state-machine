@@ -35,7 +35,7 @@ describe('NullState', () => {
 
     expect(() => {
       state.enterState();
-      state.update(16);
+      state.update(0.016);
       state.exitState();
       state.destroy();
     }).not.toThrow();
@@ -61,7 +61,7 @@ describe('NullState', () => {
 
     expect(() => {
       sm.setState('Null');
-      sm.update(16);
+      sm.update(0.016);
     }).not.toThrow();
 
     expect(sm.currentState?.stateName).toBe('Null');

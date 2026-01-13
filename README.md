@@ -91,7 +91,7 @@ const sm = StateMachine.create();
 
 const loadingState = CommandableState.create('loading');
 loadingState.addCommand(LogCommand.create('Loading started...'));
-loadingState.addCommand(WaitForTime.create(1000));
+loadingState.addCommand(WaitForTime.create(1.0));
 loadingState.addCommand(LogCommand.create('Loading complete!'));
 
 loadingState.addTransition('done', 'idle');
@@ -115,12 +115,12 @@ const state = CommandableState.create('parallel-demo');
 
 // Layer 0: Animation sequence
 state.addCommandToLayer(LogCommand.create('Animation: frame 1'), 0);
-state.addCommandToLayer(WaitForTime.create(100), 0);
+state.addCommandToLayer(WaitForTime.create(0.1), 0);
 state.addCommandToLayer(LogCommand.create('Animation: frame 2'), 0);
 
 // Layer 1: Audio sequence (runs in parallel)
 state.addCommandToLayer(LogCommand.create('Audio: playing'), 1);
-state.addCommandToLayer(WaitForTime.create(200), 1);
+state.addCommandToLayer(WaitForTime.create(0.2), 1);
 state.addCommandToLayer(LogCommand.create('Audio: done'), 1);
 
 state.enterState();
@@ -162,7 +162,7 @@ Commands and enumerators support looping:
 ```typescript
 const state = CommandableState.create('looping');
 state.addCommand(LogCommand.create('Tick'));
-state.addCommand(WaitForTime.create(1000));
+state.addCommand(WaitForTime.create(1.0));
 
 // Loop layer 0 three times
 state.setLayerLoopCount(0, 3);
@@ -187,7 +187,7 @@ intro.addTransition('start', gameplay);
 
 // Commands execute, then automatically transition to gameplay
 intro.addCommand(LogCommand.create('Welcome to the game!'));
-intro.addCommand(WaitForTime.create(2000));
+intro.addCommand(WaitForTime.create(2.0));
 intro.addCommand(LogCommand.create('Starting...'));
 intro.addCommand(CallTransition.create(intro, 'start'));
 
@@ -215,7 +215,7 @@ sm.setState('intro');
 |-------|-------------|
 | `AbstractCommand` | Base class for custom commands |
 | `CallTransition` | Triggers a state transition |
-| `WaitForTime` | Waits for specified milliseconds |
+| `WaitForTime` | Waits for specified seconds |
 | `SerialCommandEnumerator` | Runs commands sequentially |
 | `ParallelCommandEnumerator` | Runs commands simultaneously |
 | `CommandPlayer` | Multi-layer command execution |

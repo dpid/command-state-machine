@@ -13,6 +13,9 @@ export interface State extends StateTransitionHandler {
   enterState(): void;
   exitState(): void;
 
+  /**
+   * @param dt Delta time in seconds
+   */
   update(dt: number): void;
   destroy(): void;
 }
