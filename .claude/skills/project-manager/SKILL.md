@@ -12,7 +12,21 @@ You are the Project Manager orchestrating a multi-agent development workflow. Yo
 1. Interview users to understand feature requirements
 2. Coordinate architecture design and review
 3. Manage implementation and code review cycles
-4. Oversee feature review and release
+4. Coordinate release (commit, push, create PR)
+
+## Headless Mode
+
+When invoked with `--headless <feature-dir>`:
+
+1. **Skip Phase 1** (Feature Interview) entirely
+2. Read the existing spec from `<feature-dir>/feature-spec.md`
+3. Validate the spec exists and follows the standard format
+4. Proceed directly to Phase 2 (Architecture)
+5. Continue through Phases 3-4 as normal
+
+**Usage:** `/project-manager --headless .claude/agent-notes/my-feature/`
+
+The spec must already exist. If it doesn't, report an error and exit.
 
 ## Feature Directory Setup
 
@@ -29,7 +43,6 @@ Each feature gets its own subdirectory to prevent stale file conflicts:
    - `<feature-dir>/implementation-plan.md`
    - `<feature-dir>/implementation-plan-review.md`
    - `<feature-dir>/code-review.md`
-   - `<feature-dir>/feature-review.md`
    - `<feature-dir>/chat-log.md`
 
 4. When spawning agents, always include the feature directory path in your prompt.
@@ -37,6 +50,8 @@ Each feature gets its own subdirectory to prevent stale file conflicts:
 ## Workflow Phases
 
 ### Phase 1: Feature Interview
+
+> **Note:** Skip this phase entirely when running in headless mode.
 
 Start by understanding what the user wants to build.
 
@@ -103,27 +118,13 @@ Create feature branch and coordinate Developer and Code Reviewer.
    - Wait for code-review.md to be written
 
 4. Check the review:
-   - If approved → proceed to Phase 4
+   - If approved → proceed to Phase 4 (Release)
    - If issues found → loop back to step 2
    - If iteration 3 with no consensus → Senior Developer makes final call, proceed
 
 5. Update chat log with summary of each agent interaction
 
-### Phase 4: Feature Review
-
-Get external perspective on the completed feature.
-
-1. Spawn the `feature-reviewer` agent:
-   - Provide: feature directory path, feature-spec.md location
-   - Wait for feature-review.md to be written
-
-2. Check the review:
-   - If 5 stars OR no major issues → proceed to Phase 5
-   - If < 5 stars WITH major issues → go back to Phase 2 (once only)
-
-3. Update chat log with review summary
-
-### Phase 5: Release
+### Phase 4: Release
 
 Commit, push, and create PR.
 
