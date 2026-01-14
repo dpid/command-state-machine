@@ -1,5 +1,6 @@
 import type { StateTransitionHandler } from './state-transition-handler.interface';
 import type { StateMachine } from './state-machine.interface';
+import type { TransitionGuard } from './transition-guard.type';
 
 export interface State extends StateTransitionHandler {
   readonly stateName: string;
@@ -10,8 +11,8 @@ export interface State extends StateTransitionHandler {
   readonly children: readonly State[];
   readonly lastActiveChild: State | null;
 
-  addTransition(transitionName: string, toState: State): void;
-  addTransition(transitionName: string, toStateName: string): void;
+  addTransition(transitionName: string, toState: State, guard?: TransitionGuard): void;
+  addTransition(transitionName: string, toStateName: string, guard?: TransitionGuard): void;
   removeTransition(transitionName: string): void;
 
   addSubstate(child: State): void;
