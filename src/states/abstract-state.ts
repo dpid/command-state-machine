@@ -1,10 +1,16 @@
 import type { State } from './state.interface';
 import type { StateMachine } from './state-machine.interface';
+import type { TransitionGuard } from './transition-guard.type';
+
+interface TransitionConfig {
+  targetName: string;
+  guard?: TransitionGuard;
+}
 
 export abstract class AbstractState implements State {
   protected name: string = '';
   protected machine: StateMachine | null = null;
-  protected transitionNamesToStateNames: Map<string, string> = new Map();
+  protected transitionNamesToStateNames: Map<string, TransitionConfig> = new Map();
   protected parentState: State | null = null;
   protected childStates: Map<string, State> = new Map();
   protected lastChild: State | null = null;
@@ -35,16 +41,19 @@ export abstract class AbstractState implements State {
     return this.lastChild;
   }
 
-  addTransition(transitionName: string, toStateOrName: State | string): void {
+  addTransition(transitionName: string, toStateOrName: State | string, guard?: TransitionGuard): void {
     if (typeof toStateOrName === 'string') {
       if (!transitionName || !toStateOrName) return;
-      this.transitionNamesToStateNames.set(transitionName, toStateOrName);
+      this.transitionNamesToStateNames.set(transitionName, {
+        targetName: toStateOrName,
+        guard,
+      });
     } else {
       if (toStateOrName === null) return;
       const targetPath = toStateOrName.parent !== null
         ? toStateOrName.getStatePath()
         : toStateOrName.stateName;
-      this.addTransition(transitionName, targetPath);
+      this.addTransition(transitionName, targetPath, guard);
     }
   }
 
@@ -60,8 +69,14 @@ export abstract class AbstractState implements State {
     const definingState = this.findTransition(transitionName);
     if (definingState === null) return;
 
-    const targetName = (definingState as AbstractState).transitionNamesToStateNames.get(transitionName);
-    if (targetName === undefined) return;
+    const config = (definingState as AbstractState).transitionNamesToStateNames.get(transitionName);
+    if (config === undefined) return;
+
+    if (config.guard !== undefined && !config.guard(transitionName)) {
+      return;
+    }
+
+    const targetName = config.targetName;
 
     if (targetName.includes('.')) {
       const resolvedState = this.resolveHierarchicalPath(targetName);

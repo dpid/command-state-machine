@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { AsyncCommand } from './async-command';
 import { SerialCommandEnumerator } from './serial-command-enumerator';
 import { ParallelCommandEnumerator } from './parallel-command-enumerator';
@@ -67,8 +67,7 @@ describe('AsyncCommand', () => {
       expect(cmd.isCompleted).toBe(true);
     });
 
-    it('should complete when Promise rejects and log error', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('should complete when Promise rejects', async () => {
       const error = new Error('Test error');
       const cmd = TestAsyncCommand.create(() => Promise.reject(error));
 
@@ -78,25 +77,77 @@ describe('AsyncCommand', () => {
       await delay(10);
 
       expect(cmd.isCompleted).toBe(true);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('AsyncCommand failed:', error);
-
-      consoleErrorSpy.mockRestore();
     });
 
-    it('should handle rejection with no error object', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      const cmd = TestAsyncCommand.create(() => Promise.reject(undefined));
+    it('should expose error when Promise rejects', async () => {
+      const error = new Error('Test error');
+      const cmd = TestAsyncCommand.create(() => Promise.reject(error)) as TestAsyncCommand;
+
+      cmd.start();
+      expect(cmd.isFailed).toBe(false);
+      expect(cmd.error).toBe(null);
+
+      await delay(10);
+
+      expect(cmd.isCompleted).toBe(true);
+      expect(cmd.isFailed).toBe(true);
+      expect(cmd.error).toBe(error);
+    });
+
+    it('should keep error null when Promise resolves', async () => {
+      const cmd = TestAsyncCommand.create(() => Promise.resolve()) as TestAsyncCommand;
+
+      cmd.start();
+      expect(cmd.isFailed).toBe(false);
+      expect(cmd.error).toBe(null);
+
+      await delay(10);
+
+      expect(cmd.isCompleted).toBe(true);
+      expect(cmd.isFailed).toBe(false);
+      expect(cmd.error).toBe(null);
+    });
+
+    it('should handle rejection with undefined', async () => {
+      const cmd = TestAsyncCommand.create(() => Promise.reject(undefined)) as TestAsyncCommand;
 
       cmd.start();
       await delay(10);
 
       expect(cmd.isCompleted).toBe(true);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'AsyncCommand failed:',
-        'Unknown error'
-      );
+      expect(cmd.isFailed).toBe(true);
+      expect(cmd.error).toBe(undefined);
+    });
 
-      consoleErrorSpy.mockRestore();
+    it('should handle rejection with null', async () => {
+      const cmd = TestAsyncCommand.create(() => Promise.reject(null)) as TestAsyncCommand;
+
+      cmd.start();
+      await delay(10);
+
+      expect(cmd.isCompleted).toBe(true);
+      expect(cmd.isFailed).toBe(true);
+      expect(cmd.error).toBe(null);
+    });
+
+    it('should reset error state when restarted', async () => {
+      let shouldFail = true;
+      const cmd = TestAsyncCommand.create(() =>
+        shouldFail ? Promise.reject(new Error('fail')) : Promise.resolve()
+      ) as TestAsyncCommand;
+
+      cmd.start();
+      await delay(10);
+      expect(cmd.isCompleted).toBe(true);
+      expect(cmd.isFailed).toBe(true);
+      expect(cmd.error).toEqual(new Error('fail'));
+
+      shouldFail = false;
+      cmd.start();
+      await delay(10);
+      expect(cmd.isCompleted).toBe(true);
+      expect(cmd.isFailed).toBe(false);
+      expect(cmd.error).toBe(null);
     });
 
     it('should ignore completion when stopped before Promise resolves', async () => {
@@ -242,7 +293,6 @@ describe('AsyncCommand', () => {
     });
 
     it('should continue serial sequence after Promise rejection', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const logs: string[] = [];
       const serial = new SerialCommandEnumerator();
 
@@ -268,7 +318,6 @@ describe('AsyncCommand', () => {
       ]);
 
       serial.destroy();
-      consoleErrorSpy.mockRestore();
     });
 
     it('should stop async command when serial enumerator is stopped', async () => {
@@ -358,7 +407,6 @@ describe('AsyncCommand', () => {
     });
 
     it('should handle rejection in parallel without affecting other commands', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const logs: string[] = [];
       const parallel = new ParallelCommandEnumerator();
 
@@ -386,7 +434,6 @@ describe('AsyncCommand', () => {
       expect(logs).toEqual(['success1', 'success2']);
 
       parallel.destroy();
-      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -415,8 +462,6 @@ describe('AsyncCommand', () => {
     });
 
     it('should handle errors thrown synchronously in onExecuteAsync', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       class ThrowingCommand extends AsyncCommand {
         protected override async onExecuteAsync(): Promise<void> {
           throw new Error('Sync error');
@@ -427,15 +472,14 @@ describe('AsyncCommand', () => {
         }
       }
 
-      const cmd = ThrowingCommand.create();
+      const cmd = ThrowingCommand.create() as ThrowingCommand;
       cmd.start();
 
       await delay(10);
 
       expect(cmd.isCompleted).toBe(true);
-      expect(consoleErrorSpy).toHaveBeenCalled();
-
-      consoleErrorSpy.mockRestore();
+      expect(cmd.isFailed).toBe(true);
+      expect(cmd.error).toEqual(new Error('Sync error'));
     });
 
     it('should reset isExecuting flag after completion for restartability', async () => {
@@ -456,7 +500,6 @@ describe('AsyncCommand', () => {
     });
 
     it('should reset isExecuting flag after rejection for restartability', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       let shouldReject = true;
 
       const cmd = TestAsyncCommand.create(() =>
@@ -473,8 +516,6 @@ describe('AsyncCommand', () => {
       await delay(10);
       expect(cmd.isCompleted).toBe(true);
       expect(cmd.executionCount).toBe(2);
-
-      consoleErrorSpy.mockRestore();
     });
   });
 
