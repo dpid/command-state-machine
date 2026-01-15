@@ -10,6 +10,8 @@ export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer 
   protected layers: CommandEnumerator[] = [];
   protected loopCountValue: number = 0;
   protected currentLoopValue: number = 0;
+  private paused: boolean = false;
+  public timeScale: number = 1.0;
 
   private get parallelEnumerator(): CommandEnumerator {
     if (this.parallelCommandEnumerator === null) {
@@ -32,6 +34,18 @@ export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer 
 
   get layersCount(): number {
     return this.layers.length;
+  }
+
+  get isPaused(): boolean {
+    return this.paused;
+  }
+
+  pause(): void {
+    this.paused = true;
+  }
+
+  resume(): void {
+    this.paused = false;
   }
 
   addCommand(command: Command, layer?: number): void {
@@ -161,7 +175,11 @@ export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer 
   }
 
   protected override onUpdate(dt: number): void {
-    this.parallelEnumerator.update(dt);
+    if (this.paused) {
+      return;
+    }
+    const scaledDt = dt * Math.max(0, this.timeScale) || 0;
+    this.parallelEnumerator.update(scaledDt);
   }
 
   debugDump(): string {

@@ -3,4 +3,8 @@ import type { CommandLayerCollection } from './command-layer-collection.interfac
 
 export interface CommandPlayer extends CommandEnumerator, CommandLayerCollection {
   debugDump(): string;
+  pause(): void;
+  resume(): void;
+  readonly isPaused: boolean;
+  timeScale: number;
 }
