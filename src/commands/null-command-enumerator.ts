@@ -35,6 +35,15 @@ export class NullCommandEnumerator implements CommandEnumerator {
     return false;
   }
 
+  getElapsedTime(): number | null {
+    return null;
+  }
+
+  protected debugDumpTree(_indent: string, depth: number): string {
+    const prefix = ' '.repeat(depth * 2);
+    return `${prefix}NullCommandEnumerator [completed]`;
+  }
+
   static create(): CommandEnumerator {
     return new NullCommandEnumerator();
   }

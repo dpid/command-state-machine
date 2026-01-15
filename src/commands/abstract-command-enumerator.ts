@@ -53,4 +53,18 @@ export class AbstractCommandEnumerator extends AbstractCommand implements Comman
       }
     });
   }
+
+  override debugDumpTree(indent: string, depth: number): string {
+    let result = super.debugDumpTree(indent, depth);
+    for (const command of this.commands) {
+      if (command instanceof AbstractCommand) {
+        result += '\n' + command.debugDumpTree(indent, depth + 1);
+      }
+    }
+    return result;
+  }
+
+  protected override getDebugCommandName(): string {
+    return 'CommandEnumerator';
+  }
 }
