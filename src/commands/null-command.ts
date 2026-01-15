@@ -19,6 +19,14 @@ export class NullCommand implements Command {
   destroy(): void {}
   update(_dt: number): void {}
 
+  onComplete(_callback: () => void): this {
+    return this;
+  }
+
+  offComplete(_callback: () => void): this {
+    return this;
+  }
+
   static create(): Command {
     return new NullCommand();
   }

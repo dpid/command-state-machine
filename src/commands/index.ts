@@ -1,4 +1,4 @@
-export type { Command } from './command.interface';
+export type { Command, CompletionCallback } from './command.interface';
 export type { CommandCollection } from './command-collection.interface';
 export type { CommandEnumerator } from './command-enumerator.interface';
 export type { CommandLayerCollection } from './command-layer-collection.interface';
