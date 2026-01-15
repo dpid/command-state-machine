@@ -19,6 +19,15 @@ export class NullCommand implements Command {
   destroy(): void {}
   update(_dt: number): void {}
 
+  getElapsedTime(): number | null {
+    return null;
+  }
+
+  protected debugDumpTree(_indent: string, depth: number): string {
+    const prefix = ' '.repeat(depth * 2);
+    return `${prefix}NullCommand [completed]`;
+  }
+
   static create(): Command {
     return new NullCommand();
   }
