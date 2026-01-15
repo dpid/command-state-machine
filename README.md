@@ -305,6 +305,48 @@ state.enterWithHistory();              // Resume last active path
 state.transitionTo(otherState);  // Finds common ancestor, exits/enters efficiently
 ```
 
+## Debugging
+
+### Command Tree Visualization
+
+Use `debugDump()` on a CommandPlayer to see the full command hierarchy with status and timing:
+
+```typescript
+const state = CommandableState.create('combat');
+state.addCommand(WaitForTime.create(0.5));
+state.addCommand(LogCommand.create('Attack!'));
+
+state.enterState();
+// ... after some time ...
+
+console.log(state.commandPlayer.debugDump());
+```
+
+Output:
+```
+CommandPlayer [running] (234.56ms elapsed)
+  SerialCommandEnumerator (cmd 1/2), loop 1/1 [running]
+    WaitForTime (500ms) [running] (234.56ms elapsed)
+    LogCommand [pending]
+```
+
+Status indicators: `[pending]`, `[running]`, `[completed]`
+
+### State Machine Debug Mode
+
+Enable console logging of state transitions:
+
+```typescript
+const sm = StateMachine.create();
+sm.setDebugMode(true);
+
+sm.setState('idle');
+// Console: [StateMachine] idle @ 1234567890
+
+sm.handleTransition('start');
+// Console: [StateMachine] running @ 1234567891
+```
+
 ## API Reference
 
 ### State Machine
