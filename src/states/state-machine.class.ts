@@ -1,8 +1,8 @@
 import type { State } from './state.interface';
-import type { StateMachine, StateChangeCallback } from './state-machine.interface';
+import type { StateMachine, StateChangeListener } from './state-machine.interface';
 
 export class StateMachineImpl implements StateMachine {
-  private stateChangeCallbacks: Set<StateChangeCallback> = new Set();
+  private stateChangeListeners: Set<StateChangeListener> = new Set();
   protected stateDictionary: Map<string, State> = new Map();
   protected activeState: State | null = null;
   private debugMode: boolean = false;
@@ -11,12 +11,12 @@ export class StateMachineImpl implements StateMachine {
     return this.activeState;
   }
 
-  onStateChange(callback: StateChangeCallback): void {
-    this.stateChangeCallbacks.add(callback);
+  addStateChangeListener(listener: StateChangeListener): void {
+    this.stateChangeListeners.add(listener);
   }
 
-  offStateChange(callback: StateChangeCallback): void {
-    this.stateChangeCallbacks.delete(callback);
+  removeStateChangeListener(listener: StateChangeListener): void {
+    this.stateChangeListeners.delete(listener);
   }
 
   setDebugMode(enabled: boolean): void {
@@ -24,7 +24,7 @@ export class StateMachineImpl implements StateMachine {
   }
 
   private emitStateChange(stateName: string): void {
-    this.stateChangeCallbacks.forEach((callback) => callback(stateName));
+    this.stateChangeListeners.forEach((listener) => listener(stateName));
   }
 
   getState(stateName: string): State | null {
@@ -113,7 +113,7 @@ export class StateMachineImpl implements StateMachine {
   destroy(): void {
     this.stateDictionary.forEach((state) => state.destroy());
     this.stateDictionary.clear();
-    this.stateChangeCallbacks.clear();
+    this.stateChangeListeners.clear();
   }
 
   static create(): StateMachineImpl {

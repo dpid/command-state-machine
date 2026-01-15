@@ -35,6 +35,14 @@ export class NullCommandEnumerator implements CommandEnumerator {
     return false;
   }
 
+  addCompletionListener(_listener: () => void): this {
+    return this;
+  }
+
+  removeCompletionListener(_listener: () => void): this {
+    return this;
+  }
+
   getElapsedTime(): number | null {
     return null;
   }

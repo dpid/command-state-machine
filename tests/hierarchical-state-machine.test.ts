@@ -166,7 +166,7 @@ describe('Hierarchical State Machine', () => {
       sm.addState(parent);
 
       const stateChanges: string[] = [];
-      sm.onStateChange((name) => stateChanges.push(name));
+      sm.addStateChangeListener((name) => stateChanges.push(name));
 
       sm.setState('Parent.Child');
 
@@ -687,7 +687,7 @@ describe('Hierarchical State Machine', () => {
       sm.addState(stateB);
 
       const stateChanges: string[] = [];
-      sm.onStateChange((name) => stateChanges.push(name));
+      sm.addStateChangeListener((name) => stateChanges.push(name));
 
       sm.setState('StateA');
       sm.setState('StateB');

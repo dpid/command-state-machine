@@ -19,6 +19,14 @@ export class NullCommand implements Command {
   destroy(): void {}
   update(_dt: number): void {}
 
+  addCompletionListener(_listener: () => void): this {
+    return this;
+  }
+
+  removeCompletionListener(_listener: () => void): this {
+    return this;
+  }
+
   getElapsedTime(): number | null {
     return null;
   }

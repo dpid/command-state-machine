@@ -183,6 +183,8 @@ describe('AsyncCommand', () => {
         addCommand: () => {},
         removeCommand: () => {},
         hasCommand: () => false,
+        addCompletionListener: () => cmd.parent as any,
+        removeCompletionListener: () => cmd.parent as any,
       };
 
       cmd.start();
