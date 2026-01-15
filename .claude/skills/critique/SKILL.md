@@ -50,55 +50,46 @@ Think about your experience building games. Consider:
 - What would make this a must-have library?
 - What's notably absent?
 
-### 3. Check Existing Feedback
+### 3. Check Existing Issues
 
-Before writing your findings, read the existing feedback files (if they exist):
+Before creating new issues, check what already exists:
 
-- `.claude/agent-notes/reported-issues.md`
-- `.claude/agent-notes/feature-requests.md`
-
-For each issue or feature you would report:
-- If it matches an existing item → increment that item's vote count
-- If it's genuinely new → add it with `[1 vote]`
-
-You can vote on multiple existing items per critique run.
-
-### 4. Write Your Findings
-
-Update the two feedback files:
-
-**`.claude/agent-notes/reported-issues.md`**
-
-Format for issues:
-```markdown
-## Reported Issues
-
-- [ ] [1 vote] **Issue Title** - Brief description of the problem and why it matters to game developers
-- [ ] [3 votes] **Another Issue** - This one has been noticed by multiple critiques
+```bash
+gh issue list --state all --limit 100
 ```
 
-**`.claude/agent-notes/feature-requests.md`**
+Review the existing issues to avoid creating duplicates.
 
-Format for feature requests:
-```markdown
-## Feature Requests
+### 4. Create GitHub Issues
 
-- [ ] [1 vote] **Feature Title** - What it would do and why game developers would want it
-- [ ] [2 votes] **Popular Feature** - Multiple critiques have requested this
+For each bug or feature request you want to report, create a GitHub issue:
+
+```bash
+gh issue create --title "[Bug] Issue Title" --body "Description of the problem
+
+## Additional Context
+Why this matters to game developers and any relevant details"
 ```
 
-**Vote counting rules:**
-- New items start with `[1 vote]`
-- To upvote an existing item, change `[N votes]` to `[N+1 votes]` (or `[1 vote]` to `[2 votes]`)
-- Higher vote counts indicate issues/features that multiple independent critiques noticed
+```bash
+gh issue create --title "[Feature] Feature Title" --body "What this feature would do
+
+## Additional Context
+Why game developers would want this and example use cases"
+```
+
+**Guidelines:**
+- Prefix titles with `[Bug]` or `[Feature]` to indicate the type
+- Keep descriptions clear and focused on the game developer perspective
+- Only create issues for genuinely important feedback - don't nitpick
+- Skip anything that already exists as a GitHub issue
 
 ### 5. Report Summary
 
-After writing your findings, provide a brief verbal summary:
+After creating issues, provide a brief verbal summary:
 
-- How many new issues added (if any)
-- How many new feature requests added (if any)
-- How many existing items you upvoted (if any)
+- How many new issues created (with links)
+- Any existing issues you found that match your concerns
 - Your overall impression of the project's current state
 
 ## Guidelines
