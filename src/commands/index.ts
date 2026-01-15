@@ -9,6 +9,7 @@ export { AbstractCommandEnumerator } from './abstract-command-enumerator';
 export { AsyncCommand } from './async-command';
 export { CallTransition } from './call-transition';
 export { CommandPlayer } from './command-player.class';
+export { ConditionalCommand } from './conditional-command';
 export { NullCommand } from './null-command';
 export { NullCommandEnumerator } from './null-command-enumerator';
 export { ParallelCommandEnumerator } from './parallel-command-enumerator';
