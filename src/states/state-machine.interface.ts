@@ -9,9 +9,6 @@ export interface StateMachine extends StateTransitionHandler {
   addStateChangeListener(listener: StateChangeListener): void;
   removeStateChangeListener(listener: StateChangeListener): void;
 
-  /**
-   * Enable or disable debug logging of state transitions
-   */
   setDebugMode(enabled: boolean): void;
 
   getState(stateName: string): State | null;
@@ -21,9 +18,6 @@ export interface StateMachine extends StateTransitionHandler {
   addState(state: State): void;
   removeState(state: State): void;
 
-  /**
-   * @param dt Delta time in seconds
-   */
   update(dt: number): void;
   destroy(): void;
 }

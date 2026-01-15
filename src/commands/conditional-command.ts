@@ -2,49 +2,6 @@ import type { Command } from './command.interface';
 import { AbstractCommand } from './abstract-command';
 import { NullCommand } from './null-command';
 
-/**
- * Command that executes one of two branches based on a runtime condition.
- *
- * The predicate is evaluated when start() is called, not at construction time.
- * Only the chosen branch executes; the other branch is never started.
- *
- * @example Basic usage
- * const condition = ConditionalCommand.create(
- *   () => enemy.isDead,
- *   WaitForTime.create(1.0),  // Play victory animation
- *   NullCommand.create()      // Continue immediately
- * );
- *
- * @example Optional false branch (no-op)
- * const condition = ConditionalCommand.create(
- *   () => player.hasShield,
- *   PlayShieldEffect.create()
- *   // No false branch needed
- * );
- *
- * @example Nested conditionals
- * const condition = ConditionalCommand.create(
- *   () => enemy.health <= 0,
- *   ConditionalCommand.create(
- *     () => enemy.isBoss,
- *     PlayBossDefeatSequence.create(),
- *     PlayEnemyDefeatSequence.create()
- *   ),
- *   AttackCommand.create()
- * );
- *
- * @example In a serial sequence
- * const sequence = new SerialCommandEnumerator();
- * sequence.addCommand(MoveToEnemy.create());
- * sequence.addCommand(
- *   ConditionalCommand.create(
- *     () => enemy.isDead,
- *     WaitForTime.create(1.0),
- *     AttackCommand.create()
- *   )
- * );
- * sequence.addCommand(ReturnToIdle.create());
- */
 export class ConditionalCommand extends AbstractCommand {
   private activeBranch: Command | null = null;
 

@@ -1,9 +1,5 @@
 import type { CommandEnumerator } from './command-enumerator.interface';
 
-/**
- * Listener invoked when a command completes normally.
- * Does not fire on external stop() or destroy() calls.
- */
 export type CompletionListener = () => void;
 
 export interface Command {
