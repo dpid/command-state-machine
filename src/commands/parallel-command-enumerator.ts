@@ -41,4 +41,16 @@ export class ParallelCommandEnumerator extends AbstractCommandEnumerator {
       }
     }
   }
+
+  protected override getDebugCommandName(): string {
+    let name = 'ParallelCommandEnumerator';
+
+    if (this.loopCountValue > 0) {
+      name += ` (loop ${this.currentLoopValue + 1}/${this.loopCountValue})`;
+    } else if (this.loopCountValue < 0) {
+      name += ' (infinite loop)';
+    }
+
+    return name;
+  }
 }

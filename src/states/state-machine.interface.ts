@@ -9,6 +9,11 @@ export interface StateMachine extends StateTransitionHandler {
   addStateChangeListener(listener: StateChangeListener): void;
   removeStateChangeListener(listener: StateChangeListener): void;
 
+  /**
+   * Enable or disable debug logging of state transitions
+   */
+  setDebugMode(enabled: boolean): void;
+
   getState(stateName: string): State | null;
   setState(stateName: string): void;
   setState(state: State): void;

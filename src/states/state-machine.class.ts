@@ -5,6 +5,7 @@ export class StateMachineImpl implements StateMachine {
   private stateChangeListeners: Set<StateChangeListener> = new Set();
   protected stateDictionary: Map<string, State> = new Map();
   protected activeState: State | null = null;
+  private debugMode: boolean = false;
 
   get currentState(): State | null {
     return this.activeState;
@@ -16,6 +17,10 @@ export class StateMachineImpl implements StateMachine {
 
   removeStateChangeListener(listener: StateChangeListener): void {
     this.stateChangeListeners.delete(listener);
+  }
+
+  setDebugMode(enabled: boolean): void {
+    this.debugMode = enabled;
   }
 
   private emitStateChange(stateName: string): void {
@@ -43,6 +48,9 @@ export class StateMachineImpl implements StateMachine {
             }
             this.activeState = leafState;
             this.emitStateChange(leafState.getStatePath());
+            if (this.debugMode) {
+              console.log('[StateMachine]', leafState.stateName, '@', Date.now());
+            }
           }
         }
       } else {
@@ -64,6 +72,9 @@ export class StateMachineImpl implements StateMachine {
       this.activeState = state;
       this.emitStateChange(state.stateName);
       this.activeState.enterState();
+      if (this.debugMode) {
+        console.log('[StateMachine]', state.stateName, '@', Date.now());
+      }
     }
   }
 

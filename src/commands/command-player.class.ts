@@ -163,6 +163,32 @@ export class CommandPlayerImpl extends AbstractCommand implements CommandPlayer 
   protected override onUpdate(dt: number): void {
     this.parallelEnumerator.update(dt);
   }
+
+  debugDump(): string {
+    return this.debugDumpTree('', 0);
+  }
+
+  override debugDumpTree(indent: string, depth: number): string {
+    let result = super.debugDumpTree(indent, depth);
+    if (this.parallelCommandEnumerator !== null) {
+      if (this.parallelCommandEnumerator instanceof AbstractCommand) {
+        result += '\n' + this.parallelCommandEnumerator.debugDumpTree(indent, depth + 1);
+      }
+    }
+    return result;
+  }
+
+  protected override getDebugCommandName(): string {
+    let name = 'CommandPlayer';
+
+    if (this.loopCountValue > 0) {
+      name += ` (loop ${this.currentLoopValue + 1}/${this.loopCountValue})`;
+    } else if (this.loopCountValue < 0) {
+      name += ' (infinite loop)';
+    }
+
+    return name;
+  }
 }
 
 export { CommandPlayerImpl as CommandPlayer };

@@ -19,6 +19,10 @@ export class WaitForTime extends AbstractCommand {
     }
   }
 
+  protected override getDebugCommandName(): string {
+    return `WaitForTime (${(this.seconds * 1000).toFixed(0)}ms)`;
+  }
+
   static create(seconds: number): Command {
     return new WaitForTime(seconds);
   }

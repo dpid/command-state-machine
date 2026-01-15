@@ -64,4 +64,18 @@ export class SerialCommandEnumerator extends AbstractCommandEnumerator {
       this.currentCommand.update(dt);
     }
   }
+
+  protected override getDebugCommandName(): string {
+    const currentIndex = this.currentIndex;
+    const commandsCount = this.commandsCount;
+    let name = `SerialCommandEnumerator (cmd ${currentIndex + 1}/${commandsCount})`;
+
+    if (this.loopCountValue > 0) {
+      name += `, loop ${this.currentLoopValue + 1}/${this.loopCountValue}`;
+    } else if (this.loopCountValue < 0) {
+      name += ', infinite loop';
+    }
+
+    return name;
+  }
 }

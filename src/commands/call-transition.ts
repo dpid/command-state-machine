@@ -13,6 +13,10 @@ export class CallTransition extends AbstractCommand {
     this.complete();
   }
 
+  protected override getDebugCommandName(): string {
+    return `CallTransition -> ${this.transition}`;
+  }
+
   static create(handler: StateTransitionHandler, transition: string): Command {
     const command = new CallTransition();
     command.handler = handler;
