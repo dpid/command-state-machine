@@ -1,11 +1,11 @@
-import type { Command, CompletionCallback } from './command.interface';
+import type { Command, CompletionListener } from './command.interface';
 import type { CommandEnumerator } from './command-enumerator.interface';
 import { NullCommandEnumerator } from './null-command-enumerator';
 
 export abstract class AbstractCommand implements Command {
   protected completed: boolean = false;
   protected parentEnumerator: CommandEnumerator = NullCommandEnumerator.create();
-  private completionCallbacks: Set<CompletionCallback> = new Set();
+  private completionListeners: Set<CompletionListener> = new Set();
 
   get isCompleted(): boolean {
     return this.completed;
@@ -30,7 +30,7 @@ export abstract class AbstractCommand implements Command {
 
   destroy(): void {
     this.onDestroy();
-    this.completionCallbacks.clear();
+    this.completionListeners.clear();
   }
 
   update(dt: number): void {
@@ -40,51 +40,51 @@ export abstract class AbstractCommand implements Command {
   }
 
   /**
-   * Register a callback to be invoked when this command completes.
-   * Multiple callbacks can be registered and will be called in registration order.
-   * Callbacks fire only on normal completion, not when stop() or destroy() is called.
+   * Register a listener to be invoked when this command completes.
+   * Multiple listeners can be registered and will be called in registration order.
+   * Listeners fire only on normal completion, not when stop() or destroy() is called.
    *
-   * @param callback - Function to call when command completes
+   * @param listener - Function to call when command completes
    * @returns This command instance for method chaining
    *
    * @example
    * WaitForTime.create(1.0)
-   *   .onComplete(() => console.log('Timer finished!'))
-   *   .onComplete(() => playSound('ding'));
+   *   .addCompletionListener(() => console.log('Timer finished!'))
+   *   .addCompletionListener(() => playSound('ding'));
    */
-  onComplete(callback: CompletionCallback): this {
-    this.completionCallbacks.add(callback);
+  addCompletionListener(listener: CompletionListener): this {
+    this.completionListeners.add(listener);
     return this;
   }
 
   /**
-   * Unregister a previously registered completion callback.
+   * Unregister a previously registered completion listener.
    *
-   * @param callback - The callback function to remove
+   * @param listener - The listener function to remove
    * @returns This command instance for method chaining
    */
-  offComplete(callback: CompletionCallback): this {
-    this.completionCallbacks.delete(callback);
+  removeCompletionListener(listener: CompletionListener): this {
+    this.completionListeners.delete(listener);
     return this;
   }
 
   protected complete(fromStop: boolean = false): void {
     if (!this.completed) {
       if (!fromStop) {
-        this.invokeCompletionCallbacks();
+        this.invokeCompletionListeners();
       }
       this.completed = true;
       this.parentEnumerator.handleCompletedCommand(this);
     }
   }
 
-  private invokeCompletionCallbacks(): void {
-    const callbacks = Array.from(this.completionCallbacks);
-    callbacks.forEach((callback) => {
+  private invokeCompletionListeners(): void {
+    const listeners = Array.from(this.completionListeners);
+    listeners.forEach((listener) => {
       try {
-        callback();
+        listener();
       } catch (error) {
-        console.error('Error in command completion callback:', error);
+        console.error('Error in command completion listener:', error);
       }
     });
   }

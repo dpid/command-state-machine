@@ -45,7 +45,7 @@ describe('StateMachine', () => {
     sm.addState(stateA);
     sm.addState(stateB);
 
-    sm.onStateChange((name) => stateChanges.push(name));
+    sm.addStateChangeListener((name) => stateChanges.push(name));
 
     sm.setState('StateA');
     sm.handleTransition('next');
@@ -178,7 +178,7 @@ describe('CallTransition', () => {
     sm.addState(stateB);
     sm.addState(stateC);
 
-    sm.onStateChange((name) => stateChanges.push(name));
+    sm.addStateChangeListener((name) => stateChanges.push(name));
 
     const logs: string[] = [];
     stateA.addCommand(LogCommand.create('StateA: Starting', logs));

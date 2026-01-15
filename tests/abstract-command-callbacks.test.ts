@@ -5,7 +5,7 @@ import {
   ParallelCommandEnumerator,
   WaitForTime,
   type Command,
-  type CompletionCallback,
+  type CompletionListener,
 } from '../src';
 
 class TestCommand extends AbstractCommand {
@@ -37,7 +37,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      expect(() => command.onComplete(callback)).not.toThrow();
+      expect(() => command.addCompletionListener(callback)).not.toThrow();
     });
 
     it('should allow registering multiple callbacks', () => {
@@ -45,8 +45,8 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback1 = vi.fn();
       const callback2 = vi.fn();
 
-      command.onComplete(callback1);
-      command.onComplete(callback2);
+      command.addCompletionListener(callback1);
+      command.addCompletionListener(callback2);
 
       command.start();
 
@@ -58,8 +58,8 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      command.onComplete(callback);
-      command.offComplete(callback);
+      command.addCompletionListener(callback);
+      command.removeCompletionListener(callback);
       command.start();
 
       expect(callback).not.toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback1 = vi.fn();
       const callback2 = vi.fn();
 
-      const result = command.onComplete(callback1).onComplete(callback2);
+      const result = command.addCompletionListener(callback1).addCompletionListener(callback2);
 
       expect(result).toBe(command);
     });
@@ -79,8 +79,8 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command: Command = TestCommand.create(false);
       const callback = vi.fn();
 
-      expect(() => command.onComplete(callback)).not.toThrow();
-      expect(() => command.offComplete(callback)).not.toThrow();
+      expect(() => command.addCompletionListener(callback)).not.toThrow();
+      expect(() => command.removeCompletionListener(callback)).not.toThrow();
     });
   });
 
@@ -89,7 +89,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
 
       expect(callback).toHaveBeenCalledTimes(1);
@@ -101,9 +101,9 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback2 = vi.fn();
       const callback3 = vi.fn();
 
-      command.onComplete(callback1);
-      command.onComplete(callback2);
-      command.onComplete(callback3);
+      command.addCompletionListener(callback1);
+      command.addCompletionListener(callback2);
+      command.addCompletionListener(callback3);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);
@@ -115,9 +115,9 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const order: number[] = [];
 
-      command.onComplete(() => order.push(1));
-      command.onComplete(() => order.push(2));
-      command.onComplete(() => order.push(3));
+      command.addCompletionListener(() => order.push(1));
+      command.addCompletionListener(() => order.push(2));
+      command.addCompletionListener(() => order.push(3));
       command.start();
 
       expect(order).toEqual([1, 2, 3]);
@@ -127,7 +127,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
 
       expect(callback).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
 
       expect(callback).toHaveBeenCalledWith();
@@ -149,7 +149,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
       command.stop();
 
@@ -160,7 +160,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
       command.stop();
 
@@ -172,7 +172,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
 
       expect(callback).toHaveBeenCalledTimes(1);
@@ -188,7 +188,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.destroy();
 
       expect(callback).not.toHaveBeenCalled();
@@ -198,7 +198,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(false);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.destroy();
       command.start();
 
@@ -210,7 +210,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback = vi.fn();
 
       command.start();
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.destroy();
 
       expect(callback).not.toHaveBeenCalled();
@@ -222,9 +222,9 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback2 = vi.fn(() => command.destroy());
       const callback3 = vi.fn();
 
-      command.onComplete(callback1);
-      command.onComplete(callback2);
-      command.onComplete(callback3);
+      command.addCompletionListener(callback1);
+      command.addCompletionListener(callback2);
+      command.addCompletionListener(callback3);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);
@@ -238,7 +238,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
       expect(callback).toHaveBeenCalledTimes(1);
 
@@ -250,7 +250,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback = vi.fn();
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
       command.start();
       command.start();
@@ -265,13 +265,13 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const serial = new SerialCommandEnumerator();
 
       const cmd1 = TestCommand.create(true);
-      cmd1.onComplete(() => logs.push('cmd1 complete'));
+      cmd1.addCompletionListener(() => logs.push('cmd1 complete'));
 
       const cmd2 = TestCommand.create(true);
-      cmd2.onComplete(() => logs.push('cmd2 complete'));
+      cmd2.addCompletionListener(() => logs.push('cmd2 complete'));
 
       const cmd3 = TestCommand.create(true);
-      cmd3.onComplete(() => logs.push('cmd3 complete'));
+      cmd3.addCompletionListener(() => logs.push('cmd3 complete'));
 
       serial.addCommand(cmd1);
       serial.addCommand(cmd2);
@@ -294,13 +294,13 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const parallel = new ParallelCommandEnumerator();
 
       const cmd1 = TestCommand.create(true);
-      cmd1.onComplete(callbacks.cmd1);
+      cmd1.addCompletionListener(callbacks.cmd1);
 
       const cmd2 = TestCommand.create(true);
-      cmd2.onComplete(callbacks.cmd2);
+      cmd2.addCompletionListener(callbacks.cmd2);
 
       const cmd3 = TestCommand.create(true);
-      cmd3.onComplete(callbacks.cmd3);
+      cmd3.addCompletionListener(callbacks.cmd3);
 
       parallel.addCommand(cmd1);
       parallel.addCommand(cmd2);
@@ -319,7 +319,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const callback = vi.fn();
       const wait = WaitForTime.create(0.1);
 
-      wait.onComplete(callback);
+      wait.addCompletionListener(callback);
       wait.start();
 
       expect(callback).not.toHaveBeenCalled();
@@ -351,7 +351,7 @@ describe('AbstractCommand - Completion Callbacks', () => {
         throw new Error('Test error');
       });
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
 
       expect(() => command.start()).not.toThrow();
       expect(callback).toHaveBeenCalledTimes(1);
@@ -365,9 +365,9 @@ describe('AbstractCommand - Completion Callbacks', () => {
       });
       const callback3 = vi.fn();
 
-      command.onComplete(callback1);
-      command.onComplete(callback2);
-      command.onComplete(callback3);
+      command.addCompletionListener(callback1);
+      command.addCompletionListener(callback2);
+      command.addCompletionListener(callback3);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);
@@ -382,11 +382,11 @@ describe('AbstractCommand - Completion Callbacks', () => {
         throw testError;
       });
 
-      command.onComplete(callback);
+      command.addCompletionListener(callback);
       command.start();
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error in command completion callback:',
+        'Error in command completion listener:',
         testError
       );
     });
@@ -397,10 +397,10 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback2 = vi.fn();
       const callback1 = vi.fn(() => {
-        command.onComplete(callback2);
+        command.addCompletionListener(callback2);
       });
 
-      command.onComplete(callback1);
+      command.addCompletionListener(callback1);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);
@@ -414,11 +414,11 @@ describe('AbstractCommand - Completion Callbacks', () => {
 
     it('should handle callback removing itself during execution', () => {
       const command = TestCommand.create(true);
-      const callback1: CompletionCallback = vi.fn(() => {
-        command.offComplete(callback1);
+      const callback1: CompletionListener = vi.fn(() => {
+        command.removeCompletionListener(callback1);
       });
 
-      command.onComplete(callback1);
+      command.addCompletionListener(callback1);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);
@@ -432,11 +432,11 @@ describe('AbstractCommand - Completion Callbacks', () => {
       const command = TestCommand.create(true);
       const callback2 = vi.fn();
       const callback1 = vi.fn(() => {
-        command.offComplete(callback2);
+        command.removeCompletionListener(callback2);
       });
 
-      command.onComplete(callback1);
-      command.onComplete(callback2);
+      command.addCompletionListener(callback1);
+      command.addCompletionListener(callback2);
       command.start();
 
       expect(callback1).toHaveBeenCalledTimes(1);

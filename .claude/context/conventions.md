@@ -39,6 +39,22 @@ abstract class AbstractCommand {
 }
 ```
 
+### Event Listener Registration
+Use `addListener`/`removeListener` pattern for external event subscription:
+```typescript
+// Good - clear distinction from lifecycle hooks
+addStateChangeListener(listener: StateChangeListener): void;
+removeStateChangeListener(listener: StateChangeListener): void;
+
+// Avoid - conflicts with lifecycle hook naming (onStart, onUpdate, etc.)
+onStateChange(callback: StateChangeCallback): void;
+offStateChange(callback: StateChangeCallback): void;
+```
+
+- Type names: Use `*Listener` suffix (e.g., `StateChangeListener`, `CompletionListener`)
+- Method names: `add*Listener` / `remove*Listener`
+- Reserve `on*` prefix for protected lifecycle hooks that subclasses override
+
 ### Exports
 - Interfaces exported as `type`
 - Classes/utilities exported as values

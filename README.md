@@ -28,7 +28,7 @@ sm.addState(idle);
 sm.addState(running);
 
 // Listen for state changes
-sm.onStateChange((stateName) => {
+sm.addStateChangeListener((stateName) => {
   console.log(`State: ${stateName}`);
 });
 

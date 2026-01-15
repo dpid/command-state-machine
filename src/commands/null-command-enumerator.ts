@@ -35,11 +35,11 @@ export class NullCommandEnumerator implements CommandEnumerator {
     return false;
   }
 
-  onComplete(_callback: () => void): this {
+  addCompletionListener(_listener: () => void): this {
     return this;
   }
 
-  offComplete(_callback: () => void): this {
+  removeCompletionListener(_listener: () => void): this {
     return this;
   }
 

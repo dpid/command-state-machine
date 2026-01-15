@@ -1,5 +1,5 @@
 export type { State } from './state.interface';
-export type { StateMachine as StateMachineType, StateChangeCallback } from './state-machine.interface';
+export type { StateMachine as StateMachineType, StateChangeListener } from './state-machine.interface';
 export type { StateTransitionHandler } from './state-transition-handler.interface';
 export type { TransitionGuard } from './transition-guard.type';
 
